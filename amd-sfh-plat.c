@@ -235,25 +235,25 @@ static void amd_sfh_init_hid_devices(struct amd_sfh_plat_dev *privdata)
  */
 static void remove_hid_devices(struct amd_sfh_plat_dev *privdata)
 {
-	if (privdata->accel) {
+	if (privdata->accel)
 		hid_destroy_device(privdata->accel);
-		privdata->accel = NULL;
-	}
 
-	if (privdata->gyro) {
+	privdata->accel = NULL;
+
+	if (privdata->gyro)
 		hid_destroy_device(privdata->gyro);
-		privdata->gyro = NULL;
-	}
 
-	if (privdata->magno) {
+	privdata->gyro = NULL;
+
+	if (privdata->magno)
 		hid_destroy_device(privdata->magno);
-		privdata->magno = NULL;
-	}
 
-	if (privdata->als) {
+	privdata->magno = NULL;
+
+	if (privdata->als)
 		hid_destroy_device(privdata->als);
-		privdata->als = NULL;
-	}
+
+	privdata->als = NULL;
 }
 
 /**
@@ -304,13 +304,13 @@ static int amd_sfh_platform_remove(struct platform_device *pdev)
 }
 
 /**
- * Suspends the device.
+ * Suspends the device driver by removing all HID devices.
  */
 static int amd_sfh_platform_suspend(struct platform_device *pdev, pm_message_t state)
 {
 	struct amd_sfh_plat_dev *privdata;
 
-	dev_err(&pdev->dev, "Suspending!\n");
+	dev_err(&pdev->dev, "SUSPEND!\n");
 	privdata = platform_get_drvdata(pdev);
 	if (!privdata)
 		return -EINVAL;
@@ -320,13 +320,13 @@ static int amd_sfh_platform_suspend(struct platform_device *pdev, pm_message_t s
 }
 
 /**
- * Resumes the HIS devices.
+ * Resumes the platform driver by re-creating athr HID devices.
  */
 static int amd_sfh_platform_resume(struct platform_device *pdev)
 {
 	struct amd_sfh_plat_dev *privdata;
 
-	dev_err(&pdev->dev, "Resuming!\n");
+	dev_err(&pdev->dev, "RESUME!\n");
 	privdata = platform_get_drvdata(pdev);
 	if (!privdata)
 		return -EINVAL;
