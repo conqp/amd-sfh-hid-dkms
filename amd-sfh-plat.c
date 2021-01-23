@@ -303,38 +303,6 @@ static int amd_sfh_platform_remove(struct platform_device *pdev)
 	return 0;
 }
 
-/**
- * Suspends the device driver by removing all HID devices.
- */
-static int amd_sfh_platform_suspend(struct platform_device *pdev, pm_message_t state)
-{
-	struct amd_sfh_plat_dev *privdata;
-
-	dev_err(&pdev->dev, "SUSPEND!\n");
-	privdata = platform_get_drvdata(pdev);
-	if (!privdata)
-		return -EINVAL;
-
-	remove_hid_devices(privdata);
-	return 0;
-}
-
-/**
- * Resumes the platform driver by re-creating athr HID devices.
- */
-static int amd_sfh_platform_resume(struct platform_device *pdev)
-{
-	struct amd_sfh_plat_dev *privdata;
-
-	dev_err(&pdev->dev, "RESUME!\n");
-	privdata = platform_get_drvdata(pdev);
-	if (!privdata)
-		return -EINVAL;
-
-	amd_sfh_init_hid_devices(privdata);
-	return 0;
-}
-
 static const struct acpi_device_id amd_sfh_acpi_match[] = {
 	{ "AMDI0080" },
 	{ },
@@ -345,8 +313,6 @@ MODULE_DEVICE_TABLE(acpi, amd_sfh_acpi_match);
 static struct platform_driver amd_sfh_platform_driver = {
 	.probe = amd_sfh_platform_probe,
 	.remove = amd_sfh_platform_remove,
-	.suspend = amd_sfh_platform_suspend,
-	.resume = amd_sfh_platform_resume,
 	.driver = {
 		.name = "amd-sfh-hid",
 		.acpi_match_table = amd_sfh_acpi_match,
