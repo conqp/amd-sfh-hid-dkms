@@ -121,8 +121,11 @@ sensors, you can load the module `amd-sfh-hid` with the kernel parameter
 |        sensor        |   mask   |
 +======================+==========+
 | accelerometer        |  BIT(0)  |
++----------------------+----------+
 | gyroscope            |  BIT(1)  |
++----------------------+----------+
 | magnetometer         |  BIT(2)  |
++----------------------+----------+
 | ambient light sensor |  BIT(19) |
 +----------------------+----------+
 
