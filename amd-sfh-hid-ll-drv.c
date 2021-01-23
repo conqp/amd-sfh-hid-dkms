@@ -26,7 +26,7 @@
  *
  * This function gets called during call to hid_add_device
  *
- * Return: 0 on success and non zero on error
+ * Return: 0 on success and non zero on error.
  */
 static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 {
@@ -66,7 +66,8 @@ free_buf:
  * amd_sfh_hid_ll_start - Starts the HID device.
  * @hid:	The HID device
  *
- * Allocates DMA memory and schedules report polling.
+ * Allocates DMA memory on the PCI device.
+ * Returns 0 on success and non-zero on error.
  */
 static int amd_sfh_hid_ll_start(struct hid_device *hid)
 {
@@ -87,7 +88,7 @@ static int amd_sfh_hid_ll_start(struct hid_device *hid)
  * amd_sfh_hid_ll_stop - Stops the HID device.
  * @hid:	The HID device
  *
- * Stops report polling jobs and frees the DMA memory.
+ * Frees the DMA memory on the PCI device.
  */
 static void amd_sfh_hid_ll_stop(struct hid_device *hid)
 {
@@ -103,7 +104,9 @@ static void amd_sfh_hid_ll_stop(struct hid_device *hid)
  * amd_sfh_hid_ll_open - Opens the HID device.
  * @hid:	The HID device
  *
- * Starts the corresponding sensor via the PCI driver.
+ * Starts the corresponding sensor via the PCI driver
+ * and schedules report polling.
+ * Always returns 0.
  */
 static int amd_sfh_hid_ll_open(struct hid_device *hid)
 {
@@ -120,7 +123,7 @@ static int amd_sfh_hid_ll_open(struct hid_device *hid)
  * amd_sfh_hid_ll_close - Closes the HID device.
  * @hid:	The HID device
  *
- * Stops the corresponding sensor via the PCI driver.
+ * Stops report polling and the corresponding sensor via the PCI driver.
  */
 static void amd_sfh_hid_ll_close(struct hid_device *hid)
 {
