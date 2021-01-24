@@ -23,7 +23,7 @@
 #define AMD_SFH_HID_VENDOR	0x3fe
 #define AMD_SFH_HID_PRODUCT	0x0001
 #define AMD_SFH_HID_VERSION	0x0001
-#define AMD_SFH_PHY_DEV		"AMD Sensor Fusion Hub (PCIe)"#
+#define AMD_SFH_PHY_DEV		"AMD Sensor Fusion Hub (PCIe)"
 
 /**
  * get_sensor_name - Returns the name of a sensor by its index.
