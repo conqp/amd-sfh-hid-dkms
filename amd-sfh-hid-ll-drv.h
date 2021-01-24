@@ -12,6 +12,8 @@
 
 #include <linux/hid.h>
 #include <linux/pci.h>
+#include <linux/types.h>
+#include <linux/workqueue.h>
 
 #include "amd-sfh.h"
 
