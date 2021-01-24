@@ -131,5 +131,5 @@ Available sensors are:
 
 To enable e.g. only the accelerometer:
 
-    $ cat /etc/modprobe.d/amd_sfh.conf
-    options amd_sfh sensor_mask=1
+	$ cat /etc/modprobe.d/amd_sfh.conf
+	options amd_sfh sensor_mask=1
