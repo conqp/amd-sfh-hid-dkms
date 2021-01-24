@@ -10,8 +10,8 @@
 #include <linux/dma-mapping.h>
 #include <linux/hid.h>
 #include <linux/pci.h>
-#include <linux/wait.h>
 #include <linux/sched.h>
+#include <linux/wait.h>
 #include <linux/workqueue.h>
 
 #include "amd-sfh.h"
