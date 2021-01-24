@@ -28,7 +28,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
 		.matches = {
 			DMI_MATCH(DMI_BOARD_VENDOR, "HP"),
 			DMI_MATCH(DMI_BOARD_NAME, "8497"),
-			DMI_MATCH(DMI_BOARD_NAME, "92.48"),
+			DMI_MATCH(DMI_BOARD_VERSION, "92.48"),
 		},
 	},
 	{ }
