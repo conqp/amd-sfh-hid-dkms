@@ -13,6 +13,6 @@ config AMD_SFH_HID
 	  starting from 17h family of RYZEN parts.
 
 	  This driver can also be built as a module. If so, the module will
-	  be called amd-sfh.
+	  be called amd-sfh-pci and amd-sfh-plat.
 	  Say Y or M here if you want to support AMD SFH. If unsure, say N.
 endmenu
