@@ -35,7 +35,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
 };
 
 /**
- * Returns the sensor mask for hardwere, on which the
+ * Returns the sensor mask for hardware, on which the
  * sensor mask is not written into the P2C registers.
  *
  * Returns the sensor mask or zero per default.
