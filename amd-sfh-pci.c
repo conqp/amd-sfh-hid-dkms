@@ -15,7 +15,7 @@
 #include <linux/pci.h>
 #include <linux/types.h>
 
-#include "amd-sfh-pci.h"
+#include "amd-sfh.h"
 #include "amd-sfh-quirks.h"
 
 /* Module parameters */

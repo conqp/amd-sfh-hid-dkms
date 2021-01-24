@@ -11,9 +11,9 @@
 #include <linux/slab.h>
 #include <linux/types.h>
 
+#include "amd-sfh.h"
 #include "amd-sfh-hid-ll-drv.h"
 #include "amd-sfh-hid-reports.h"
-#include "amd-sfh-pci.h"
 
 #define AMD_SFH_UPDATE_INTERVAL	200
 #define AMD_SFH_HID_VENDOR	0x3fe
