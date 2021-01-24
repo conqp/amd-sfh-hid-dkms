@@ -35,7 +35,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
 };
 
 
-uint amd_sfh_get_sensor_mask_override() {
+uint amd_sfh_quirks_get_sensor_mask() {
 	if (dmi_check_system(hp_envy_x360)) {
 		return ACCEL_MASK + MAGNO_MASK;
 	}

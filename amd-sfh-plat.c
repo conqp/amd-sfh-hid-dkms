@@ -18,6 +18,7 @@
 #include "amd-sfh-hid-ll-drv.h"
 #include "amd-sfh-hid-reports.h"
 #include "amd-sfh-plat.h"
+#include "amd-sfh-quirks.h"
 
 #define AMD_SFH_UPDATE_INTERVAL	200
 #define AMD_SFH_HID_VENDOR	0x3fe
@@ -169,7 +170,7 @@ static uint amd_sfh_plat_get_sensor_mask(struct pci_dev *pci_dev)
 	uint sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
 
 	if (!sensor_mask)
-		sensor_mask = amd_sfh_get_sensor_mask_override();
+		sensor_mask = amd_sfh_quirks_get_sensor_mask();
 
 	return sensor_mask;
 }
