@@ -17,6 +17,8 @@
 
 #include "amd-sfh.h"
 
+#define DRIVER_NAME	"amd_sfh"
+
 /* Module parameters */
 static uint sensor_mask_override;
 module_param_named(sensor_mask, sensor_mask_override, uint, 0644);
