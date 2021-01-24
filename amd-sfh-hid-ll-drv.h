@@ -34,7 +34,7 @@ struct amd_sfh_hid_data {
 	struct hid_device *hid;
 	u32 *cpu_addr;
 	dma_addr_t dma_handle;
-	unsigned int interval;
+	u8 interval;
 };
 
 /* The low-level driver for AMD SFH HID devices */
