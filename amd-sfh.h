@@ -132,7 +132,7 @@ uint amd_sfh_quirks_get_sensor_mask(void);
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 			  dma_addr_t dma_handle, unsigned int interval);
 void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx);
-int amd_sfh_client_init(struct amd_sfh_data *drv_data);
-int amd_sfh_client_deinit(struct amd_sfh_data *drv_data);
+int amd_sfh_client_init(struct amd_sfh_data *privdata);
+int amd_sfh_client_deinit(struct amd_sfh_data *privdata);
 
 #endif
