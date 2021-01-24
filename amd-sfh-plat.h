@@ -14,6 +14,8 @@
 #include <linux/list.h>
 #include <linux/pci.h>
 
+#include "amd-sfh-pci.h"
+
 #define ACCEL_MASK	BIT(ACCEL_IDX)
 #define GYRO_MASK	BIT(GYRO_IDX)
 #define MAGNO_MASK	BIT(MAG_IDX)
