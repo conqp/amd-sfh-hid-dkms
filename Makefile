@@ -6,3 +6,6 @@
 #
 ccflags-m := -Werror
 obj-$(CONFIG_AMD_SFH_HID) += amd-sfh-pci.o amd-sfh-plat.o
+amd-sfh-plat-objs += amd-sfh-hid-ll-drv.o
+amd-sfh-plat-objs += amd-sfh-hid-reports.o
+amd-sfh-plat-objs += amd-sfh-hid-quirks.o
