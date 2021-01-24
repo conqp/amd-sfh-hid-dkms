@@ -209,8 +209,6 @@ int amd_sfh_client_deinit(struct amd_sfh_data *privdata)
 
 		if (privdata->sensors[i])
 			hid_destroy_device(privdata->sensors[i]);
-
-		privdata->sensors[i] = NULL;
 	}
 
 	return 0;
