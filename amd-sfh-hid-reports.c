@@ -10,9 +10,9 @@
 #include <linux/string.h>
 #include <linux/slab.h>
 
+#include "amd-sfh.h"
 #include "amd-sfh-hid-descriptors.h"
 #include "amd-sfh-hid-reports.h"
-#include "amd-sfh-pci.h"
 
 #define FIRMWARE_MULTIPLIER						1000
 #define HID_USAGE_SENSOR_PROP_REPORTING_STATE_ALL_EVENTS_ENUM		0x41

@@ -16,7 +16,6 @@
 #include <linux/types.h>
 
 #include "amd-sfh.h"
-#include "amd-sfh-quirks.h"
 
 /* Module parameters */
 static uint sensor_mask_override;

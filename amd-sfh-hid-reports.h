@@ -8,7 +8,7 @@
 #ifndef AMD_SFH_HID_REPORTS_H
 #define AMD_SFH_HID_REPORTS_H
 
-#include "amd-sfh-pci.h"
+#include "amd-sfh.h"
 
 /**
  * desc_type - Report descriptor types.

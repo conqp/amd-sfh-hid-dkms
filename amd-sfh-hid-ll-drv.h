@@ -13,7 +13,7 @@
 #include <linux/hid.h>
 #include <linux/pci.h>
 
-#include "amd-sfh-pci.h"
+#include "amd-sfh.h"
 
 /**
  * struct amd_sfh_hid_data - Per HID device driver data.
