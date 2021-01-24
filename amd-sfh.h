@@ -15,6 +15,7 @@
 #include <linux/types.h>
 
 #define PCI_DEVICE_ID_AMD_SFH	0x15E4
+#define AMD_SFH_MAX_HID_DEVICES	4
 
 /**
  * Sensor Fusion Hub communication registers
@@ -122,10 +123,7 @@ union amd_sfh_parm {
 struct amd_sfh_drv_data {
 	void __iomem *mmio;
 	struct pci_dev *pci_dev;
-	struct hid_device *accel;
-	struct hid_device *gyro;
-	struct hid_device *magno;
-	struct hid_device *als;
+	struct hid_device *sensors[AMD_SFH_MAX_HID_DEVICES];
 };
 
 /* SFH PCI driver interface functions */

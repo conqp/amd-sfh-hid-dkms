@@ -167,24 +167,24 @@ void amd_sfh_client_init(struct amd_sfh_drv_data *drv_data)
 	sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
 
 	if (sensor_mask & ACCEL_MASK)
-		drv_data->accel = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
+		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
 	else
-		drv_data->accel = NULL;
+		drv_data->sensors[i++] = NULL;
 
 	if (sensor_mask & GYRO_MASK)
-		drv_data->gyro = amd_sfh_hid_probe(pci_dev, GYRO_IDX);
+		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, GYRO_IDX);
 	else
-		drv_data->gyro = NULL;
+		drv_data->sensors[i++] = NULL;
 
 	if (sensor_mask & MAGNO_MASK)
-		drv_data->magno = amd_sfh_hid_probe(pci_dev, MAG_IDX);
+		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, MAG_IDX);
 	else
-		drv_data->magno = NULL;
+		drv_data->sensors[i++] = NULL;
 
 	if (sensor_mask & ALS_MASK)
-		drv_data->als = amd_sfh_hid_probe(pci_dev, ALS_IDX);
+		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, ALS_IDX);
 	else
-		drv_data->als = NULL;
+		drv_data->sensors[i++] = NULL;
 }
 
 /**
@@ -195,23 +195,10 @@ void amd_sfh_client_init(struct amd_sfh_drv_data *drv_data)
  */
 void amd_sfh_client_deinit(struct amd_sfh_drv_data *drv_data)
 {
-	if (drv_data->accel)
-		hid_destroy_device(drv_data->accel);
+	int i;
 
-	drv_data->accel = NULL;
-
-	if (drv_data->gyro)
-		hid_destroy_device(drv_data->gyro);
-
-	drv_data->gyro = NULL;
-
-	if (drv_data->magno)
-		hid_destroy_device(drv_data->magno);
-
-	drv_data->magno = NULL;
-
-	if (drv_data->als)
-		hid_destroy_device(drv_data->als);
-
-	drv_data->als = NULL;
+	for (i = 0; i < AMD_SFH_MAX_HID_DEVICES; i++) {
+		hid_destroy_device(drv_data->sensors[i]);
+		drv_data->sensors[i] = NULL;
+	}
 }
