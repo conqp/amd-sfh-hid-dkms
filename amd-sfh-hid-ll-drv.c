@@ -73,7 +73,6 @@ static int amd_sfh_hid_ll_start(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "STARTING");
 	hid_data->cpu_addr = dma_alloc_coherent(&hid_data->pci_dev->dev,
 						AMD_SFH_HID_DMA_SIZE,
 						&hid_data->dma_handle,
@@ -94,7 +93,6 @@ static void amd_sfh_hid_ll_stop(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "STOPPING");
 	dma_free_coherent(&hid_data->pci_dev->dev, AMD_SFH_HID_DMA_SIZE,
 			  hid_data->cpu_addr, hid_data->dma_handle);
 	hid_data->cpu_addr = NULL;
@@ -112,7 +110,6 @@ static int amd_sfh_hid_ll_open(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "OPENING");
 	amd_sfh_start_sensor(hid_data->pci_dev, hid_data->sensor_idx,
 			     hid_data->dma_handle, hid_data->interval);
 	schedule_delayed_work(&hid_data->work, hid_data->interval);
@@ -129,7 +126,6 @@ static void amd_sfh_hid_ll_close(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "CLOSING");
 	cancel_delayed_work_sync(&hid_data->work);
 	amd_sfh_stop_sensor(hid_data->pci_dev, hid_data->sensor_idx);
 }

@@ -112,7 +112,6 @@ static void amd_sfh_stop_all_sensors(struct amd_sfh_data *privdata)
 	union amd_sfh_parm parm;
 	union amd_sfh_cmd cmd;
 
-	pci_err(privdata->pci_dev, "Stopping all sensors...\n");
 	cmd.ul = 0;
 	cmd.s.cmd_id = AMD_SFH_CMD_STOP_ALL_SENSORS;
 	cmd.s.interval = 0;
