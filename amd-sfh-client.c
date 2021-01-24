@@ -164,39 +164,49 @@ int amd_sfh_client_init(struct amd_sfh_data *privdata)
 {
 	struct pci_dev *pci_dev;
 	uint sensor_mask;
-	int i = -1;
 
 	pci_dev = privdata->pci_dev;
 	sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
-	pci_err(pci_dev, "Index: %i", i);
 
 	if (sensor_mask & ACCEL_MASK)
-		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
+		privdata->sensors[0] = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
 	else
-		privdata->sensors[i++] = NULL;
+		privdata->sensors[0] = NULL;
 
-	pci_err(pci_dev, "Index: %i", i);
+	if (privdata->sensors[0])
+		pci_err(pci_dev, "Sensor 0 initialized.\n");
+	else
+		pci_err(pci_dev, "Sensor 0 NOT initialized.\n");
 
 	if (sensor_mask & GYRO_MASK)
-		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, GYRO_IDX);
+		privdata->sensors[1] = amd_sfh_hid_probe(pci_dev, GYRO_IDX);
 	else
-		privdata->sensors[i++] = NULL;
+		privdata->sensors[1] = NULL;
 
-	pci_err(pci_dev, "Index: %i", i);
+	if (privdata->sensors[1])
+		pci_err(pci_dev, "Sensor 1 initialized.\n");
+	else
+		pci_err(pci_dev, "Sensor 1 NOT initialized.\n");
 
 	if (sensor_mask & MAGNO_MASK)
-		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, MAG_IDX);
+		privdata->sensors[2] = amd_sfh_hid_probe(pci_dev, MAG_IDX);
 	else
-		privdata->sensors[i++] = NULL;
+		privdata->sensors[2] = NULL;
 
-	pci_err(pci_dev, "Index: %i", i);
+	if (privdata->sensors[2])
+		pci_err(pci_dev, "Sensor 2 initialized.\n");
+	else
+		pci_err(pci_dev, "Sensor 2 NOT initialized.\n");
 
 	if (sensor_mask & ALS_MASK)
-		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, ALS_IDX);
+		privdata->sensors[3] = amd_sfh_hid_probe(pci_dev, ALS_IDX);
 	else
-		privdata->sensors[i++] = NULL;
+		privdata->sensors[3] = NULL;
 
-	pci_err(pci_dev, "Index: %i", i);
+	if (privdata->sensors[3])
+		pci_err(pci_dev, "Sensor 3 initialized.\n");
+	else
+		pci_err(pci_dev, "Sensor 3 NOT initialized.\n");
 
 	return 0;
 }
