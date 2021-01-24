@@ -166,8 +166,8 @@ err_hid_alloc:
  * Gets the sensor mask from the PCI device.
  * Optionally overrides that value with the value provided by the
  * kernel parameter `sensor_mask_override`.
- * If sensors were specified, that the SFH fundamentally does not
- * support, it logs a warning to the kernel ring buffer.
+ * If no sensors were discovered, it returns the sensors
+ * as specified in the quirks.
  */
 static uint amd_sfh_plat_get_sensor_mask(struct pci_dev *pci_dev)
 {
