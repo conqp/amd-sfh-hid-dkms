@@ -6,7 +6,6 @@
  */
 
 #include <linux/dmi.h>
-#include <linux/types.h>
 
 #include "amd-sfh-plat.h"
 #include "amd-sfh-quirks.h"
@@ -41,7 +40,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
  *
  * Returns the sensor mask or zero per default.
  */
-int amd_sfh_quirks_get_sensor_mask() {
+uint amd_sfh_quirks_get_sensor_mask(void) {
 	if (dmi_check_system(hp_envy_x360)) {
 		return ACCEL_MASK + MAGNO_MASK;
 	}

@@ -27,8 +27,8 @@
 #define AMD_SFH_PHY_DEV		"AMD Sensor Fusion Hub (PCIe)"
 
 /* Module parameters */
-static int sensor_mask_override = -1;
-module_param_named(sensor_mask, sensor_mask_override, int, 0644);
+static uint sensor_mask_override;
+module_param_named(sensor_mask, sensor_mask_override, uint, 0644);
 MODULE_PARM_DESC(sensor_mask, "override the detected sensors mask");
 
 /**
@@ -169,11 +169,11 @@ err_hid_alloc:
  * If no sensors were discovered, it returns the sensors
  * as specified in the quirks.
  */
-static int amd_sfh_plat_get_sensor_mask(struct pci_dev *pci_dev)
+static uint amd_sfh_plat_get_sensor_mask(struct pci_dev *pci_dev)
 {
-	int sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
+	uint sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
 
-	if (sensor_mask_override >= 0)
+	if (sensor_mask_override)
 		return sensor_mask_override;
 
 	if (!sensor_mask)
@@ -194,7 +194,7 @@ static int amd_sfh_plat_get_sensor_mask(struct pci_dev *pci_dev)
 static void amd_sfh_init_hid_devices(struct amd_sfh_plat_dev *privdata)
 {
 	struct pci_dev *pci_dev;
-	int sensor_mask;
+	uint sensor_mask;
 
 	pci_dev = privdata->pci_dev;
 	sensor_mask = amd_sfh_plat_get_sensor_mask(pci_dev);

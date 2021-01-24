@@ -8,6 +8,6 @@
 #ifndef AMD_SFH_QUIRKS_H
 #define AMD_SFH_QUIRKS_H
 
-int amd_sfh_quirks_get_sensor_mask();
+uint amd_sfh_quirks_get_sensor_mask(void);
 
 #endif

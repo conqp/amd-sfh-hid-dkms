@@ -104,7 +104,7 @@ struct amd_sfh_dev {
 };
 
 /* SFH PCI driver interface functions */
-int amd_sfh_get_sensor_mask(struct pci_dev *pci_dev);
+uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev);
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 			  dma_addr_t dma_handle, unsigned int interval);
 void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx);
