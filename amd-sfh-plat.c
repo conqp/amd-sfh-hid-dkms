@@ -154,32 +154,12 @@ err_hid_alloc:
 }
 
 /**
- * amd_sfh_plat_get_sensor_mask - Returns the sensors mask.
- * @pci_dev:	The SFH PCI device
- *
- * Gets the sensor mask from the PCI device.
- * Optionally overrides that value with the value provided by the
- * kernel parameter `sensor_mask_override`.
- * If sensors were specified, that the SFH fundamentally does not
- * support, it logs a warning to the kernel ring buffer.
- */
-static uint amd_sfh_plat_get_sensor_mask(struct pci_dev *pci_dev)
-{
-	uint invalid_sensors;
-	uint sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
-
-	if (!sensor_mask)
-		sensor_mask = amd_sfh_quirks_get_sensor_mask();
-
-	return sensor_mask;
-}
-
-/**
  * init_hid_devices - Initializes the HID devices.
  * @privdata:	The platform device data
  *
  * Matches the sensors's masks against the sensor mask retrieved
- * from amd_sfh_plat_get_sensor_mask().
+ * from amd_sfh_get_sensor_mask() or, if it did not yield any sensors,
+ * against the sensor mask returned by amd_sfh_quirks_get_sensor_mask().
  * In case of a match, it instantiates a corresponding HID device
  * to process the respective sensor's data.
  */
@@ -189,7 +169,10 @@ static void amd_sfh_init_hid_devices(struct amd_sfh_plat_dev *privdata)
 	uint sensor_mask;
 
 	pci_dev = privdata->pci_dev;
-	sensor_mask = amd_sfh_plat_get_sensor_mask(pci_dev);
+	uint sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
+
+	if (!sensor_mask)
+		sensor_mask = amd_sfh_quirks_get_sensor_mask();
 
 	if (sensor_mask & ACCEL_MASK)
 		privdata->accel = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
