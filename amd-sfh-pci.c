@@ -23,9 +23,9 @@
  * Returns an integer representing the bitmask to match
  * the sensors connected to the Sensor Fusion Hub.
  */
-uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
+int amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 {
-	uint sensor_mask;
+	int sensor_mask;
 	struct amd_sfh_dev *privdata = pci_get_drvdata(pci_dev);
 
 	sensor_mask = readl(privdata->mmio + AMD_P2C_MSG3);
