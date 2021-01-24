@@ -6,6 +6,7 @@
  */
 
 #include <linux/dmi.h>
+#include <linux/types.h>
 
 #include "amd-sfh-plat.h"
 #include "amd-sfh-quirks.h"
