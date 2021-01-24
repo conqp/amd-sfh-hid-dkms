@@ -110,10 +110,10 @@ Quirks
 On some systems, the sensor hub has not been programmed with information about
 the sensors active on the device. This would result in no sensors being
 activated and no HID devices being spawned by the driver.
-The driver alrady has some quirks for such devices, that automatically
+The driver already has quirks for some devices, that automatically
 compensate for this by DMI matching and returning an appropriate sensor mask
 for the respective device.
-You may also manually activate the respective sensors, byloading the module
+You can also activate the respective sensors manually, byloading the module
 `amd-sfh` with the kernel parameter `sensor_mask=<int>`.
 Available sensors are:
 
