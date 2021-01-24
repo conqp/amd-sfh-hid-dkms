@@ -19,20 +19,11 @@
 #include "amd-sfh-hid-reports.h"
 #include "amd-sfh-plat.h"
 
+#define AMD_SFH_UPDATE_INTERVAL	200
 #define AMD_SFH_HID_VENDOR	0x3fe
 #define AMD_SFH_HID_PRODUCT	0x0001
 #define AMD_SFH_HID_VERSION	0x0001
-#define AMD_SFH_PHY_DEV		"AMD Sensor Fusion Hub (PCIe)"
-#define AMD_SFH_ALL_SENSORS	(ACCEL_MASK + GYRO_MASK + MAGNO_MASK + ALS_MASK)
-
-/* Module parameters */
-static uint sensor_mask_override = 0;
-static ushort sensor_update_interval = 200;
-
-module_param_named(sensor_mask, sensor_mask_override, uint, 0644);
-MODULE_PARM_DESC(sensor_mask, "override the detected sensors mask");
-module_param_named(interval, sensor_update_interval, ushort, 0644);
-MODULE_PARM_DESC(interval, "override the sensor update interval");
+#define AMD_SFH_PHY_DEV		"AMD Sensor Fusion Hub (PCIe)"#
 
 /**
  * get_sensor_name - Returns the name of a sensor by its index.
@@ -123,7 +114,7 @@ static struct hid_device *amd_sfh_hid_probe(struct pci_dev *pci_dev,
 	hid_data->pci_dev = pci_dev;
 	hid_data->hid = hid;
 	hid_data->cpu_addr = NULL;
-	hid_data->interval = sensor_update_interval;
+	hid_data->interval = AMD_SFH_UPDATE_INTERVAL;
 
 	INIT_DELAYED_WORK(&hid_data->work, amd_sfh_hid_poll);
 
@@ -177,14 +168,8 @@ static uint amd_sfh_plat_get_sensor_mask(struct pci_dev *pci_dev)
 	uint invalid_sensors;
 	uint sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
 
-	if (sensor_mask_override > 0)
-		sensor_mask = sensor_mask_override;
-
-	pci_info(pci_dev, "Sensor mask: %#04x\n", sensor_mask);
-
-	invalid_sensors = ~AMD_SFH_ALL_SENSORS & sensor_mask;
-	if (invalid_sensors)
-		pci_warn(pci_dev, "Invalid sensors: %#04x\n", invalid_sensors);
+	if (!sensor_mask)
+		sensor_mask = amd_sfh_get_sensor_mask_override();
 
 	return sensor_mask;
 }
