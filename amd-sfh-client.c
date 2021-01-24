@@ -203,7 +203,10 @@ int amd_sfh_client_deinit(struct amd_sfh_data *privdata)
 {
 	int i;
 
+	pci_err(pci_dev, "Deiniting all sensors...\n");
 	for (i = 0; i < AMD_SFH_MAX_HID_DEVICES; i++) {
+		pci_err(pci_dev, "Deiniting sensor %i.\n", i);
+
 		if (privdata->sensors[i])
 			hid_destroy_device(privdata->sensors[i]);
 
