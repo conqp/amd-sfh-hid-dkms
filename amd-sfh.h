@@ -111,7 +111,7 @@ union amd_sfh_parm {
 };
 
 /**
- * struct amd_sfh_drv_data - AMD SFH driver data
+ * struct amd_sfh_data - AMD SFH driver data
  * @mmio:		iommapped registers
  * @pci_dev:		Handled PCI device
  * @pci_dev:		The handled AMD SFH PCI device
@@ -120,7 +120,7 @@ union amd_sfh_parm {
  * @magno:		The HID device of the magnetometer
  * @als:		The HID device of the ambient light sensor
  */
-struct amd_sfh_drv_data {
+struct amd_sfh_data {
 	void __iomem *mmio;
 	struct pci_dev *pci_dev;
 	struct hid_device *sensors[AMD_SFH_MAX_HID_DEVICES];
@@ -128,11 +128,11 @@ struct amd_sfh_drv_data {
 
 /* SFH PCI driver interface functions */
 uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev);
+uint amd_sfh_quirks_get_sensor_mask(void);
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 			  dma_addr_t dma_handle, unsigned int interval);
 void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx);
-void amd_sfh_client_init(struct amd_sfh_drv_data *drv_data);
-void amd_sfh_client_deinit(struct amd_sfh_drv_data *drv_data);
-uint amd_sfh_quirks_get_sensor_mask(void);
+int amd_sfh_client_init(struct amd_sfh_data *drv_data);
+int amd_sfh_client_deinit(struct amd_sfh_data *drv_data);
 
 #endif

@@ -151,57 +151,64 @@ err_hid_alloc:
 
 /**
  * amd_sfh_client_init - Initializes the HID devices.
- * @drv_data:	The driver data
+ * @privdata:	The driver data
  *
  * Matches the sensors's masks against the sensor mask retrieved
  * from amd_sfh_get_sensor_mask().
  * In case of a match, it instantiates a corresponding HID device
  * to process the respective sensor's data.
+ *
+ * Always returns 0.
  */
-void amd_sfh_client_init(struct amd_sfh_drv_data *drv_data)
+int amd_sfh_client_init(struct amd_sfh_data *privdata)
 {
 	struct pci_dev *pci_dev;
 	uint sensor_mask;
-	int i = 0;
+	int i = -1;
 
-	pci_dev = drv_data->pci_dev;
+	pci_dev = privdata->pci_dev;
 	sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
 
 	if (sensor_mask & ACCEL_MASK)
-		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
+		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
 	else
-		drv_data->sensors[i++] = NULL;
+		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & GYRO_MASK)
-		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, GYRO_IDX);
+		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, GYRO_IDX);
 	else
-		drv_data->sensors[i++] = NULL;
+		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & MAGNO_MASK)
-		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, MAG_IDX);
+		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, MAG_IDX);
 	else
-		drv_data->sensors[i++] = NULL;
+		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & ALS_MASK)
-		drv_data->sensors[i++] = amd_sfh_hid_probe(pci_dev, ALS_IDX);
+		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, ALS_IDX);
 	else
-		drv_data->sensors[i++] = NULL;
+		privdata->sensors[i++] = NULL;
+
+	return 0;
 }
 
 /**
  * amd_sfh_client_deinit - Removes all active HID devices.
- * @drv_data:	The driver data
+ * @privdata:	The driver data
  *
  * Destroys all initialized HID devices.
+ * Always returns 0.
  */
-void amd_sfh_client_deinit(struct amd_sfh_drv_data *drv_data)
+int amd_sfh_client_deinit(struct amd_sfh_data *privdata)
 {
 	int i;
 
 	for (i = 0; i < AMD_SFH_MAX_HID_DEVICES; i++) {
-		if (drv_data->sensors[i])
-			hid_destroy_device(drv_data->sensors[i]);
+		if (privdata->sensors[i])
+			hid_destroy_device(privdata->sensors[i]);
 
-		drv_data->sensors[i] = NULL;
+		privdata->sensors[i] = NULL;
 	}
+
+	return 0;
 }
