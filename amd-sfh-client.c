@@ -198,7 +198,9 @@ void amd_sfh_client_deinit(struct amd_sfh_drv_data *drv_data)
 	int i;
 
 	for (i = 0; i < AMD_SFH_MAX_HID_DEVICES; i++) {
-		hid_destroy_device(drv_data->sensors[i]);
+		if (drv_data->sensors[i])
+			hid_destroy_device(drv_data->sensors[i]);
+
 		drv_data->sensors[i] = NULL;
 	}
 }
