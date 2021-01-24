@@ -171,15 +171,23 @@ int amd_sfh_client_init(struct amd_sfh_data *privdata)
 
 	if (sensor_mask & ACCEL_MASK)
 		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, ACCEL_IDX);
+	else
+		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & GYRO_MASK)
 		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, GYRO_IDX);
+	else
+		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & MAGNO_MASK)
 		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, MAG_IDX);
+	else
+		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & ALS_MASK)
 		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, ALS_IDX);
+	else
+		privdata->sensors[i++] = NULL;
 
 	return 0;
 }
@@ -201,6 +209,8 @@ int amd_sfh_client_deinit(struct amd_sfh_data *privdata)
 
 		if (privdata->sensors[i])
 			hid_destroy_device(privdata->sensors[i]);
+
+		privdata->sensors[i] = NULL;
 	}
 
 	return 0;
