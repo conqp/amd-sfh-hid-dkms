@@ -7,8 +7,8 @@
  */
 
 #include <linux/kernel.h>
-#include <linux/string.h>
 #include <linux/slab.h>
+#include <linux/string.h>
 
 #include "amd-sfh.h"
 #include "amd-sfh-hid-descriptors.h"
