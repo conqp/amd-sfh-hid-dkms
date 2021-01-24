@@ -154,7 +154,7 @@ err_hid_alloc:
  * @drv_data:	The driver data
  *
  * Matches the sensors's masks against the sensor mask retrieved
- * from amd_sfh_plat_get_sensor_mask().
+ * from amd_sfh_get_sensor_mask().
  * In case of a match, it instantiates a corresponding HID device
  * to process the respective sensor's data.
  */
