@@ -79,7 +79,7 @@ recommended to always write a minimum of 32 bytes into the DRAM.
 Driver loading
 --------------
 
-+========================+======================+
++------------------------+----------------------+
 |       PCI driver       | HID low-level driver |
 +===============================================+
 | Loaded at boot time if | Used by spawned HIDs |
