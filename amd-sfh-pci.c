@@ -129,7 +129,8 @@ static void amd_sfh_pci_remove(void *privdata)
 	amd_sfh_stop_all_sensors(privdata);
 }
 
-static int amd_sfh_pci_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
+static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
+			     const struct pci_device_id *id)
 {
 	struct amd_sfh_data *privdata;
 	int rc;
@@ -156,7 +157,8 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev, const struct pci_device_id
 	if (rc)
 		return rc;
 
-	rc = devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove, privdata);
+	rc = devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove,
+				      privdata);
 	if (rc)
 		return rc;
 
