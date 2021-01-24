@@ -7,8 +7,7 @@
 
 #include <linux/dmi.h>
 
-#include "amd-sfh-plat.h"
-#include "amd-sfh-quirks.h"
+#include "amd-sfh.h"
 
 /**
  * DMI match for HP ENVY x360 convertibles, which do not
