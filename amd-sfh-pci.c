@@ -11,10 +11,17 @@
 #include <linux/dma-mapping.h>
 #include <linux/io-64-nonatomic-lo-hi.h>
 #include <linux/module.h>
+#include <linux/moduleparam.h>
 #include <linux/pci.h>
 #include <linux/types.h>
 
 #include "amd-sfh-pci.h"
+#include "amd-sfh-quirks.h"
+
+/* Module parameters */
+static uint sensor_mask_override;
+module_param_named(sensor_mask, sensor_mask_override, uint, 0644);
+MODULE_PARM_DESC(sensor_mask, "override the detected sensors mask");
 
 /**
  * amd_sfh_get_sensor_mask - Returns the sensors mask.
@@ -26,7 +33,7 @@
 uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 {
 	uint sensor_mask;
-	struct amd_sfh_dev *privdata = pci_get_drvdata(pci_dev);
+	struct amd_sfh_drv_data *privdata = pci_get_drvdata(pci_dev);
 
 	sensor_mask = readl(privdata->mmio + AMD_P2C_MSG3);
 	/* Correct bit shift in firmware register */
@@ -35,9 +42,14 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 	if (!sensor_mask)
 		pci_err(pci_dev, "[Firmware Bug]: No sensors marked active!\n");
 
+	if (sensor_mask_override)
+		return sensor_mask_override;
+
+	if (!sensor_mask)
+		return amd_sfh_quirks_get_sensor_mask();
+
 	return sensor_mask;
 }
-EXPORT_SYMBOL_GPL(amd_sfh_get_sensor_mask);
 
 /**
  * amd_sfh_start_sensor- Starts the respective sensor.
@@ -49,7 +61,7 @@ EXPORT_SYMBOL_GPL(amd_sfh_get_sensor_mask);
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 			  dma_addr_t dma_handle, unsigned int interval)
 {
-	struct amd_sfh_dev *privdata;
+	struct amd_sfh_drv_data *privdata;
 	union amd_sfh_parm parm;
 	union amd_sfh_cmd cmd;
 
@@ -68,7 +80,6 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 }
-EXPORT_SYMBOL_GPL(amd_sfh_start_sensor);
 
 /**
  * amd_sfh_stop_sensor- Stops the respective sensor.
@@ -77,7 +88,7 @@ EXPORT_SYMBOL_GPL(amd_sfh_start_sensor);
  */
 void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx)
 {
-	struct amd_sfh_dev *privdata;
+	struct amd_sfh_drv_data *privdata;
 	union amd_sfh_parm parm;
 	union amd_sfh_cmd cmd;
 
@@ -94,7 +105,6 @@ void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx)
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 }
-EXPORT_SYMBOL_GPL(amd_sfh_stop_sensor);
 
 /**
  * amd_sfh_stop_all_sensors- Stops all sensors on the SFH.
@@ -102,7 +112,7 @@ EXPORT_SYMBOL_GPL(amd_sfh_stop_sensor);
  */
 static void amd_sfh_stop_all_sensors(struct pci_dev *pci_dev)
 {
-	struct amd_sfh_dev *privdata;
+	struct amd_sfh_drv_data *privdata;
 	union amd_sfh_parm parm;
 	union amd_sfh_cmd cmd;
 
@@ -123,17 +133,17 @@ static void amd_sfh_stop_all_sensors(struct pci_dev *pci_dev)
  * amd_sfh_clear_registers - Clears the C2P and P2C registers.
  * @privdata:	PCI driver data
  */
-static void amd_sfh_clear_registers(struct amd_sfh_dev *privdata)
+static void amd_sfh_clear_registers(struct amd_sfh_drv_data *drv_data)
 {
 	unsigned int reg;
 
 	/* Clear C2P registers */
 	for (reg = AMD_C2P_MSG0; reg <= AMD_C2P_MSG9; reg += 4)
-		writel(0, privdata->mmio + reg);
+		writel(0, drv_data->mmio + reg);
 
 	/* Clear P2C registers */
 	for (reg = AMD_P2C_MSG0; reg <= AMD_P2C_MSG2; reg += 4)
-		writel(0, privdata->mmio + reg);
+		writel(0, drv_data->mmio + reg);
 }
 
 /**
@@ -144,7 +154,7 @@ static void amd_sfh_clear_registers(struct amd_sfh_dev *privdata)
  * Enables the PCI device and performs I/O mapping.
  * Returns 0 on success or nonzero on errors.
  */
-static int amd_sfh_pci_init(struct amd_sfh_dev *privdata,
+static int amd_sfh_pci_init(struct amd_sfh_drv_data *drv_data,
 			    struct pci_dev *pci_dev)
 {
 	int rc;
@@ -157,8 +167,8 @@ static int amd_sfh_pci_init(struct amd_sfh_dev *privdata,
 	if (rc)
 		return rc;
 
-	privdata->pci_dev = pci_dev;
-	privdata->mmio = pcim_iomap_table(pci_dev)[2];
+	drv_data->pci_dev = pci_dev;
+	drv_data->mmio = pcim_iomap_table(pci_dev)[2];
 	pci_set_master(pci_dev);
 
 	rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64));
@@ -167,7 +177,8 @@ static int amd_sfh_pci_init(struct amd_sfh_dev *privdata,
 	if (rc)
 		return rc;
 
-	pci_set_drvdata(pci_dev, privdata);
+	amd_sfh_client_init(drv_data);
+	pci_set_drvdata(pci_dev, drv_data);
 	pci_info(pci_dev, "AMD SFH device initialized\n");
 
 	return 0;
@@ -183,13 +194,13 @@ static int amd_sfh_pci_init(struct amd_sfh_dev *privdata,
 static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 			     const struct pci_device_id *id)
 {
-	struct amd_sfh_dev *privdata;
+	struct amd_sfh_drv_data *drv_data;
 
-	privdata = devm_kzalloc(&pci_dev->dev, sizeof(*privdata), GFP_KERNEL);
-	if (!privdata)
+	drv_data = devm_kzalloc(&pci_dev->dev, sizeof(*drv_data), GFP_KERNEL);
+	if (!drv_data)
 		return -ENOMEM;
 
-	return amd_sfh_pci_init(privdata, pci_dev);
+	return amd_sfh_pci_init(drv_data, pci_dev);
 }
 
 /**
@@ -198,11 +209,12 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
  */
 static void amd_sfh_pci_remove(struct pci_dev *pci_dev)
 {
-	struct amd_sfh_dev *privdata = pci_get_drvdata(pci_dev);
+	struct amd_sfh_drv_data *drv_data = pci_get_drvdata(pci_dev);
 
-	amd_sfh_stop_all_sensors(privdata->pci_dev);
+	amd_sfh_client_deinit(drv_data);
+	amd_sfh_stop_all_sensors(drv_data->pci_dev);
 	pci_clear_master(pci_dev);
-	amd_sfh_clear_registers(privdata);
+	amd_sfh_clear_registers(drv_data);
 }
 
 static const struct pci_device_id amd_sfh_pci_tbl[] = {

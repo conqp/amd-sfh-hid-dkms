@@ -9,6 +9,8 @@
 #ifndef AMD_SFH_PCI_H
 #define AMD_SFH_PCI_H
 
+#include <linux/bits.h>
+#include <linux/hid.h>
 #include <linux/pci.h>
 #include <linux/types.h>
 
@@ -54,6 +56,20 @@ enum sensor_idx {
 };
 
 /**
+ * Masks for sensor detection.
+ * @ACCEL_IDX:	Mask of the accelerometer
+ * @GYRO_IDX:	Mask of the gyroscope
+ * @MAG_IDX:	Mask of the magnetometer
+ * @ALS_IDX:	Mask of the ambient light sensor
+ */
+enum sensor_mask {
+	ACCEL_MASK = BIT(ACCEL_IDX),
+	GYRO_MASK = BIT(GYRO_IDX),
+	MAGNO_MASK = BIT(MAG_IDX),
+	ALS_MASK = BIT(ALS_IDX),
+};
+
+/**
  * SFH command IDs
  */
 enum {
@@ -94,13 +110,22 @@ union amd_sfh_parm {
 };
 
 /**
- * struct amd_sfh_dev - AMD SFH PCI device data
- * @pci_dev:		Handled PCI device
+ * struct amd_sfh_drv_data - AMD SFH driver data
  * @mmio:		iommapped registers
+ * @pci_dev:		Handled PCI device
+ * @pci_dev:		The handled AMD SFH PCI device
+ * @accel:		The HID device of the accelerometer
+ * @gyro:		The HID device of the gyroscope
+ * @magno:		The HID device of the magnetometer
+ * @als:		The HID device of the ambient light sensor
  */
-struct amd_sfh_dev {
-	struct pci_dev *pci_dev;
+struct amd_sfh_drv_data {
 	void __iomem *mmio;
+	struct pci_dev *pci_dev;
+	struct hid_device *accel;
+	struct hid_device *gyro;
+	struct hid_device *magno;
+	struct hid_device *als;
 };
 
 /* SFH PCI driver interface functions */
@@ -108,5 +133,7 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev);
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 			  dma_addr_t dma_handle, unsigned int interval);
 void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx);
+void amd_sfh_client_init(struct amd_sfh_drv_data *drv_data);
+void amd_sfh_client_deinit(struct amd_sfh_drv_data *drv_data);
 
 #endif
