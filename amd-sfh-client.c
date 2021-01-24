@@ -162,6 +162,7 @@ void amd_sfh_client_init(struct amd_sfh_drv_data *drv_data)
 {
 	struct pci_dev *pci_dev;
 	uint sensor_mask;
+	int i = 0;
 
 	pci_dev = drv_data->pci_dev;
 	sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
