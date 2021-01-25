@@ -43,11 +43,14 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 	if (!sensor_mask)
 		pci_err(pci_dev, "[Firmware Bug]: No sensors marked active!\n");
 
-	if (sensor_mask_override)
+	if (sensor_mask_override) {
+		pci_warn(pci_dev, "Sensor mask overridden by paramter with %x.",
+			 sensor_mask)
 		return sensor_mask_override;
+	}
 
 	if (!sensor_mask)
-		return amd_sfh_quirks_get_sensor_mask();
+		return amd_sfh_quirks_get_sensor_mask(pci_dev);
 
 	return sensor_mask;
 }
