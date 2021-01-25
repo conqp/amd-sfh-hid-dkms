@@ -122,7 +122,7 @@ struct amd_sfh_data {
 	struct hid_device *sensors[AMD_SFH_MAX_HID_DEVICES];
 };
 
-/* SFH PCI driver interface functions */
+/* SFH driver interface functions */
 uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev);
 uint amd_sfh_quirks_get_sensor_mask(void);
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
