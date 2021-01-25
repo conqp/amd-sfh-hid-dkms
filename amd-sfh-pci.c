@@ -44,7 +44,7 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 		pci_err(pci_dev, "[Firmware Bug]: No sensors marked active!\n");
 
 	if (sensor_mask_override) {
-		pci_warn(pci_dev, "Sensor bitmask override: %x -> %x.",
+		pci_warn(pci_dev, "Sensor bitmask override: %x -> %x.\n",
 			 sensor_mask, sensor_mask_override);
 		return sensor_mask_override;
 	}
