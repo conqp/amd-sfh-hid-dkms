@@ -113,12 +113,8 @@ union amd_sfh_parm {
 /**
  * struct amd_sfh_data - AMD SFH driver data
  * @mmio:		iommapped registers
- * @pci_dev:		Handled PCI device
- * @pci_dev:		The handled AMD SFH PCI device
- * @accel:		The HID device of the accelerometer
- * @gyro:		The HID device of the gyroscope
- * @magno:		The HID device of the magnetometer
- * @als:		The HID device of the ambient light sensor
+ * @pci_dev:		The AMD SFH PCI device
+ * @sensors:		The HID devices for the corresponding sensors
  */
 struct amd_sfh_data {
 	void __iomem *mmio;
