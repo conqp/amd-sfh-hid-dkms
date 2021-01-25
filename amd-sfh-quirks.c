@@ -41,7 +41,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
  * Returns an appropriate sensor mask or zero per default.
  */
 uint amd_sfh_quirks_get_sensor_mask(struct pci_dev *pci_dev) {
-	struct dmi_system_id system;
+	struct dmi_system_id *system;
 
 	if (system = dmi_first_match(hp_envy_x360)) {
 		pci_info(pci_dev, "Detected %s.\n", system->ident);
