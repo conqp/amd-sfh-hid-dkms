@@ -22,7 +22,7 @@
 /* Module parameters */
 static uint sensor_mask_override;
 module_param_named(sensor_mask, sensor_mask_override, uint, 0644);
-MODULE_PARM_DESC(sensor_mask, "override the detected sensors mask");
+MODULE_PARM_DESC(sensor_mask, "override the sensors bitmask");
 
 /**
  * amd_sfh_get_sensor_mask - Returns the sensors mask.
@@ -44,8 +44,8 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 		pci_err(pci_dev, "[Firmware Bug]: No sensors marked active!\n");
 
 	if (sensor_mask_override) {
-		pci_warn(pci_dev, "Sensor mask overridden by paramter with %x.",
-			 sensor_mask)
+		pci_warn(pci_dev, "Sensor bitmask override: %x -> %x.",
+			 sensor_mask, sensor_mask_override);
 		return sensor_mask_override;
 	}
 
