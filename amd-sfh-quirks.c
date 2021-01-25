@@ -41,17 +41,11 @@ static const struct dmi_system_id hp_envy_x360[] = {
  * Returns an appropriate sensor mask or zero per default.
  */
 uint amd_sfh_quirks_get_sensor_mask(struct pci_dev *pci_dev) {
-	uint sensor_mask = 0;
-
 	if (dmi_check_system(hp_envy_x360)) {
 		pci_info("Detected HP ENVY x360 series convertible.");
-		sensor_mask = ACCEL_MASK + MAGNO_MASK;
-	} else {
-		pci_warn("No quirks available for this hardware.")
+		return ACCEL_MASK + MAGNO_MASK;
 	}
 
-     	if (sensor_mask)
-		pci_info("Setting sensor mask to %x.", sensor_mask);
-
-	return sensor_mask;
+	pci_warn("No quirks available for this hardware.");
+	return 0;
 }
