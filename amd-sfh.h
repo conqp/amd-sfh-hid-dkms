@@ -57,11 +57,11 @@ enum sensor_idx {
 };
 
 /**
- * Masks for sensor detection.
- * @ACCEL_IDX:	Mask of the accelerometer
- * @GYRO_IDX:	Mask of the gyroscope
- * @MAG_IDX:	Mask of the magnetometer
- * @ALS_IDX:	Mask of the ambient light sensor
+ * Bit masks for sensors matching.
+ * @ACCEL_MASK:	Bit mask of the accelerometer
+ * @GYRO_MASK:	Bit mask of the gyroscope
+ * @MAGNO_MASK:	Bit mask of the magnetometer
+ * @ALS_MASK:	Bit mask of the ambient light sensor
  */
 enum sensor_mask {
 	ACCEL_MASK = BIT(ACCEL_IDX),
