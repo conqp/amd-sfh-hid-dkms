@@ -71,7 +71,7 @@ EXPORT_SYMBOL_GPL(get_report_descriptor);
  * @sensor_idx:		The sensor index
  * @descriptor_name:	The requested descriptor
  *
- * Returns the respective descriptor's size or <0 on errors.
+ * Returns the respective descriptor's size or < 0 on errors.
  */
 int get_descriptor_size(enum sensor_idx sensor_idx, enum desc_type desc_type)
 {
