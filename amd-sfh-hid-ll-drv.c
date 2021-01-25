@@ -14,9 +14,9 @@
 #include <linux/wait.h>
 #include <linux/workqueue.h>
 
-#include "amd-sfh.h"
 #include "amd-sfh-hid-ll-drv.h"
 #include "amd-sfh-hid-reports.h"
+#include "amd-sfh-pci.h"
 
 #define AMD_SFH_HID_DMA_SIZE	(sizeof(int) * 8)
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 /*
- * AMD Sensor Fusion Hub (SFH) PCIe driver
+ * AMD Sensor Fusion Hub PCIe driver
  *
  * Authors: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
  *          Nehal Bakulchandra Shah <Nehal-bakulchandra.Shah@amd.com>
@@ -16,8 +16,11 @@
 #include <linux/types.h>
 
 #include "amd-sfh.h"
+#include "amd-sfh-pci.h"
+#include "amd-sfh-quirks.h"
 
-#define DRIVER_NAME	"amd_sfh"
+#define DRIVER_NAME		"amd_sfh"
+#define PCI_DEVICE_ID_AMD_SFH	0x15E4
 
 /* Module parameters */
 static uint sensor_mask_override;

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 /*
- *  AMD SFH HID report and descriptor generation
+ *  AMD Sensor Fusion Hub HID report and descriptor generation
  *
  *  Author: Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
  *          Richard Neumann <mail@richard-neumann.de>

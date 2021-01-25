@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 /*
- *  AMD Sensor Fusion Hub HID platform driver
+ *  AMD Sensor Fusion Hub HID client
  *
  *  Authors: Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
  *           Richard Neumann <mail@richard-neumann.de>
@@ -12,8 +12,10 @@
 #include <linux/types.h>
 
 #include "amd-sfh.h"
+#include "amd-sfh-client.h"
 #include "amd-sfh-hid-ll-drv.h"
 #include "amd-sfh-hid-reports.h"
+#include "amd-sfh-pci.h"
 
 #define AMD_SFH_UPDATE_INTERVAL	200
 #define AMD_SFH_HID_VENDOR	0x3fe
@@ -203,7 +205,7 @@ int amd_sfh_client_deinit(struct amd_sfh_data *privdata)
 {
 	int i;
 
-	for (i = 0; i < AMD_SFH_MAX_HID_DEVICES; i++) {
+	for (i = 0; i < AMD_SFH_MAX_SENSORS; i++) {
 		if (privdata->sensors[i])
 			hid_destroy_device(privdata->sensors[i]);
 

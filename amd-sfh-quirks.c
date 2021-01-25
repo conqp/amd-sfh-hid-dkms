@@ -9,6 +9,7 @@
 #include <linux/pci.h>
 
 #include "amd-sfh.h"
+#include "amd-sfh-quirks.h"
 
 /**
  * DMI match for HP ENVY x360 convertibles, which do not
