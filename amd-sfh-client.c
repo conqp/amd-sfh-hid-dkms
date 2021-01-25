@@ -153,7 +153,7 @@ err_hid_alloc:
  * amd_sfh_client_init - Initializes the HID devices.
  * @privdata:	The driver data
  *
- * Matches the sensors's masks against the sensor mask retrieved
+ * Matches the sensor bit masks against the sensor bit mask retrieved
  * from amd_sfh_get_sensor_mask().
  * In case of a match, it instantiates a corresponding HID device
  * to process the respective sensor's data.
