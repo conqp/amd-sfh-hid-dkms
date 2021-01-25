@@ -6,8 +6,8 @@
  *           Richard Neumann <mail@richard-neumann.de>
  */
 
-#ifndef AMD_SFH_PCI_H
-#define AMD_SFH_PCI_H
+#ifndef AMD_SFH_H
+#define AMD_SFH_H
 
 #include <linux/bits.h>
 #include <linux/hid.h>
