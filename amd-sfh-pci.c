@@ -16,6 +16,7 @@
 #include <linux/types.h>
 
 #include "amd-sfh.h"
+#include "amd-sfh-client.h"
 #include "amd-sfh-pci.h"
 #include "amd-sfh-quirks.h"
 
