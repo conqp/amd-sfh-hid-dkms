@@ -169,7 +169,8 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 	if (rc)
 		return rc;
 
-	return amd_sfh_client_init(privdata);
+	amd_sfh_client_init(privdata);
+	return rc;
 }
 
 static const struct pci_device_id amd_sfh_pci_tbl[] = {

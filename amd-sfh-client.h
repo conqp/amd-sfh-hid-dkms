@@ -13,7 +13,7 @@
 
 #include "amd-sfh.h"
 
-int amd_sfh_client_init(struct amd_sfh_data *privdata);
-int amd_sfh_client_deinit(struct amd_sfh_data *privdata);
+void amd_sfh_client_init(struct amd_sfh_data *privdata);
+void amd_sfh_client_deinit(struct amd_sfh_data *privdata);
 
 #endif

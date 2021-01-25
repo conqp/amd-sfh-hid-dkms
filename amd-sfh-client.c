@@ -159,10 +159,8 @@ err_hid_alloc:
  * from amd_sfh_get_sensor_mask().
  * In case of a match, it instantiates a corresponding HID device
  * to process the respective sensor's data.
- *
- * Always returns 0.
  */
-int amd_sfh_client_init(struct amd_sfh_data *privdata)
+void amd_sfh_client_init(struct amd_sfh_data *privdata)
 {
 	struct pci_dev *pci_dev;
 	uint sensor_mask;
@@ -190,8 +188,6 @@ int amd_sfh_client_init(struct amd_sfh_data *privdata)
 		privdata->sensors[i++] = amd_sfh_hid_probe(pci_dev, ALS_IDX);
 	else
 		privdata->sensors[i++] = NULL;
-
-	return 0;
 }
 
 /**
@@ -199,9 +195,8 @@ int amd_sfh_client_init(struct amd_sfh_data *privdata)
  * @privdata:	The driver data
  *
  * Destroys all initialized HID devices.
- * Always returns 0.
  */
-int amd_sfh_client_deinit(struct amd_sfh_data *privdata)
+void amd_sfh_client_deinit(struct amd_sfh_data *privdata)
 {
 	int i;
 
@@ -211,6 +206,4 @@ int amd_sfh_client_deinit(struct amd_sfh_data *privdata)
 
 		privdata->sensors[i] = NULL;
 	}
-
-	return 0;
 }
