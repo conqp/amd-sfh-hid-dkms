@@ -45,7 +45,8 @@ uint amd_sfh_quirks_get_sensor_mask(struct pci_dev *pci_dev)
 {
 	struct dmi_system_id *system;
 
-	if (system = dmi_first_match(hp_envy_x360)) {
+	system = dmi_first_match(hp_envy_x360);
+	if (system) {
 		pci_info(pci_dev, "Detected %s.\n", system->ident);
 		return ACCEL_MASK + MAGNO_MASK;
 	}
