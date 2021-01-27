@@ -43,7 +43,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
  */
 uint amd_sfh_quirks_get_sensor_mask(struct pci_dev *pci_dev)
 {
-	struct dmi_system_id *system;
+	const struct dmi_system_id *system;
 
 	system = dmi_first_match(hp_envy_x360);
 	if (system) {
