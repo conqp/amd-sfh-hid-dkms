@@ -14,6 +14,7 @@
 #include <linux/pci.h>
 
 #define AMD_SFH_MAX_SENSORS	4
+#define AMD_SFH_UPDATE_INTERVAL	200
 
 /**
  * The sensor indices on the AMD SFH device

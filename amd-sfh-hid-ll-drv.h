@@ -25,7 +25,6 @@
  * @hid:		Backref to the hid device
  * @cpu_addr:		The DMA mapped CPU address
  * @dma_handle:		The DMA handle
- * @interval:		The sensor update interval
  */
 struct amd_sfh_hid_data {
 	enum sensor_idx sensor_idx;
@@ -34,7 +33,6 @@ struct amd_sfh_hid_data {
 	struct hid_device *hid;
 	u32 *cpu_addr;
 	dma_addr_t dma_handle;
-	u8 interval;
 };
 
 /* The low-level driver for AMD SFH HID devices */

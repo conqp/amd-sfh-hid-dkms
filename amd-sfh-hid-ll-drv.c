@@ -14,6 +14,7 @@
 #include <linux/wait.h>
 #include <linux/workqueue.h>
 
+#include "amd-sfh.h"
 #include "amd-sfh-hid-ll-drv.h"
 #include "amd-sfh-hid-reports.h"
 #include "amd-sfh-pci.h"
@@ -111,8 +112,8 @@ static int amd_sfh_hid_ll_open(struct hid_device *hid)
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
 	amd_sfh_start_sensor(hid_data->pci_dev, hid_data->sensor_idx,
-			     hid_data->dma_handle, hid_data->interval);
-	schedule_delayed_work(&hid_data->work, hid_data->interval);
+			     hid_data->dma_handle);
+	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 	return 0;
 }
 

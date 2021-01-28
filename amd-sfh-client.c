@@ -17,7 +17,6 @@
 #include "amd-sfh-hid-reports.h"
 #include "amd-sfh-pci.h"
 
-#define AMD_SFH_UPDATE_INTERVAL	200
 #define AMD_SFH_HID_VENDOR	0x3fe
 #define AMD_SFH_HID_PRODUCT	0x0001
 #define AMD_SFH_HID_VERSION	0x0001
@@ -79,7 +78,7 @@ static void amd_sfh_hid_poll(struct work_struct *work)
 free_buf:
 	kfree(buf);
 reschedule:
-	schedule_delayed_work(&hid_data->work, hid_data->interval);
+	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }
 
 /**
@@ -112,7 +111,6 @@ static struct hid_device *amd_sfh_hid_probe(struct pci_dev *pci_dev,
 	hid_data->pci_dev = pci_dev;
 	hid_data->hid = hid;
 	hid_data->cpu_addr = NULL;
-	hid_data->interval = AMD_SFH_UPDATE_INTERVAL;
 
 	INIT_DELAYED_WORK(&hid_data->work, amd_sfh_hid_poll);
 

@@ -63,10 +63,9 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
  * @pci_dev:	Sensor Fusion Hub PCI device
  * @sensor_idx:	Sensor index
  * @dma_handle:	DMA handle
- * @interval:	Sensor poll interval
  */
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
-			  dma_addr_t dma_handle, unsigned int interval)
+			  dma_addr_t dma_handle)
 {
 	struct amd_sfh_data *privdata;
 	union amd_sfh_parm parm;
@@ -76,7 +75,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 
 	cmd.ul = 0;
 	cmd.s.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
-	cmd.s.interval = interval;
+	cmd.s.interval = AMD_SFH_UPDATE_INTERVAL;
 	cmd.s.sensor_id = sensor_idx;
 
 	parm.ul = 0;
