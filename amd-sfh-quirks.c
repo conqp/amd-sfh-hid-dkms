@@ -6,7 +6,6 @@
  */
 
 #include <linux/dmi.h>
-#include <linux/pci.h>
 
 #include "amd-sfh.h"
 #include "amd-sfh-quirks.h"
@@ -47,18 +46,13 @@ static const struct dmi_system_id amd_sfh_dmi_quirks[] = {
  *
  * Returns an appropriate sensor mask or zero per default.
  */
-uint amd_sfh_quirks_get_sensor_mask(struct pci_dev *pci_dev)
+const struct amd_sfh_quirks *amd_sfh_get_quirks(void)
 {
 	const struct dmi_system_id *dmi_match;
-	const struct amd_sfh_quirks *quirks;
 
 	dmi_match = dmi_first_match(amd_sfh_dmi_quirks);
-	if (dmi_match) {
-		pci_info(pci_dev, "Detected %s.\n", dmi_match->ident);
-		quirks = dmi_match->driver_data;
-		return quirks->sensor_mask;
-	}
+	if (dmi_match)
+		return dmi_match->driver_data;
 
-	pci_warn(pci_dev, "No quirks available for this hardware.\n");
-	return 0;
+	return NULL;
 }

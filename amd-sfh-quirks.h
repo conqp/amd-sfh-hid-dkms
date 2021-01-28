@@ -19,6 +19,6 @@ struct amd_sfh_quirks {
 	uint sensor_mask;
 };
 
-uint amd_sfh_quirks_get_sensor_mask(struct pci_dev *pci_dev);
+const struct amd_sfh_quirks *amd_sfh_get_quirks(void);
 
 #endif

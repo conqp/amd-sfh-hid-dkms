@@ -38,23 +38,22 @@ MODULE_PARM_DESC(sensor_mask, "override the sensors bitmask");
 uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 {
 	uint sensor_mask;
-	struct amd_sfh_data *privdata = pci_get_drvdata(pci_dev);
+	struct amd_sfh_data *privdata;
+	const struct amd_sfh_quirks *quirks;
 
-	sensor_mask = readl(privdata->mmio + AMD_P2C_MSG3);
-	/* Correct bit shift in firmware register */
-	sensor_mask = sensor_mask >> 4;
+	privdata = pci_get_drvdata(pci_dev);
 
+	/* Read bit-shifted sensor mask from P2C register */
+	sensor_mask = readl(privdata->mmio + AMD_P2C_MSG3) >> 4;
 	if (!sensor_mask)
 		pci_err(pci_dev, "[Firmware Bug]: No sensors marked active!\n");
 
-	if (sensor_mask_override) {
-		pci_warn(pci_dev, "Sensor bitmask override: %x -> %x.\n",
-			 sensor_mask, sensor_mask_override);
+	if (sensor_mask_override)
 		return sensor_mask_override;
-	}
 
-	if (!sensor_mask)
-		return amd_sfh_quirks_get_sensor_mask(pci_dev);
+	quirks = amd_sfh_get_quirks();
+	if (quirks)
+		return quirks->sensor_mask;
 
 	return sensor_mask;
 }
