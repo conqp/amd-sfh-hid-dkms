@@ -11,11 +11,15 @@
 #include "amd-sfh.h"
 #include "amd-sfh-quirks.h"
 
+static const struct amd_sfh_quirks hp_envy_x360_quirks = {
+	.sensor_mask = ACCEL_MASK | MAGNO_MASK
+};
+
 /**
  * DMI match for HP ENVY x360 convertibles, which do not
  * have information about the sensor mask in the P2C registers.
  */
-static const struct dmi_system_id hp_envy_x360[] = {
+static const struct dmi_system_id amd_sfh_dmi_quirks[] = {
 	{
 		.ident = "HP ENVY x360 Convertible 13-ag0xxx",
 		.matches = {
@@ -23,6 +27,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
 			DMI_MATCH(DMI_BOARD_NAME, "8496"),
 			DMI_MATCH(DMI_BOARD_VERSION, "92.48"),
 		},
+		.driver_data = (void *)&hp_envy_x360_quirks
 	},
 	{
 		.ident = "HP ENVY x360 Convertible 15-cp0xxx",
@@ -31,6 +36,7 @@ static const struct dmi_system_id hp_envy_x360[] = {
 			DMI_MATCH(DMI_BOARD_NAME, "8497"),
 			DMI_MATCH(DMI_BOARD_VERSION, "92.48"),
 		},
+		.driver_data = (void *)&hp_envy_x360_quirks
 	},
 	{ }
 };
@@ -43,12 +49,14 @@ static const struct dmi_system_id hp_envy_x360[] = {
  */
 uint amd_sfh_quirks_get_sensor_mask(struct pci_dev *pci_dev)
 {
-	const struct dmi_system_id *system;
+	const struct dmi_system_id *dmi_match;
+	const struct amd_sfh_quirks *quirks;
 
-	system = dmi_first_match(hp_envy_x360);
-	if (system) {
-		pci_info(pci_dev, "Detected %s.\n", system->ident);
-		return ACCEL_MASK + MAGNO_MASK;
+	dmi_match = dmi_first_match(amd_sfh_dmi_quirks);
+	if (dmi_match) {
+		pci_info(pci_dev, "Detected %s.\n", dmi_match->ident);
+		quirks = dmi_match->driver_data;
+		return quirks->sensor_mask;
 	}
 
 	pci_warn(pci_dev, "No quirks available for this hardware.\n");
