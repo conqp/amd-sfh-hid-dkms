@@ -12,7 +12,7 @@
 #include <linux/types.h>
 
 /**
- * Sensor mask quirks
+ * Quirks settings.
  * @sensor_mask:	Sensor mask override
  */
 struct amd_sfh_quirks {
