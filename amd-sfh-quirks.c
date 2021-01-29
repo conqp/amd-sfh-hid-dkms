@@ -10,6 +10,9 @@
 #include "amd-sfh.h"
 #include "amd-sfh-quirks.h"
 
+/**
+ * Quirks for HP Envy x360 series systems.
+ */
 static const struct amd_sfh_quirks hp_envy_x360_quirks = {
 	.sensor_mask = ACCEL_MASK | MAGNO_MASK
 };
