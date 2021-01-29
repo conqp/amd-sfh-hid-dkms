@@ -117,17 +117,17 @@ You can also activate the respective sensors manually, by loading the module
 `amd-sfh` with the kernel parameter `sensor_mask=<int>`.
 Available sensors are:
 
-+----------------------+------------------+
-|        sensor        |       mask       |
-+======================+==================+
-| accelerometer        | BIT(0)  =      1 |
-+----------------------+------------------+
-| gyroscope            | BIT(1)  =      2 |
-+----------------------+------------------+
-| magnetometer         | BIT(2)  =      4 |
-+----------------------+------------------+
-| ambient light sensor | BIT(19) = 524288 |
-+----------------------+------------------+
++----------------------+-------+------------------+
+|        sensor        | index |       mask       |
++======================+=======+==================+
+| accelerometer        |     0 | BIT(0)  =      1 |
++----------------------+-------+------------------+
+| gyroscope            |     1 | BIT(1)  =      2 |
++----------------------+-------+------------------+
+| magnetometer         |     2 | BIT(2)  =      4 |
++----------------------+-------+------------------+
+| ambient light sensor |    19 | BIT(19) = 524288 |
++----------------------+-------+------------------+
 
 The values are additive, so to enable the gyroscope and the
 ambient light sensor, use a value of 524290.
