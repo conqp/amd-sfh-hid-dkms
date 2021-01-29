@@ -70,11 +70,11 @@ firmware over PCI-e.
 The sensors are started and stopped respectively by writing commands
 and, where applicable, DRAM addresses to certain device registers.
 The sensor's input report data can then be accessed by accessing the DRAM
-through DMA-mapped virtual addresses. Commands are sent to the device using C2P
-mail box registers. These C2P registers are mapped in PCIe address space.
-Writing into the device message registers generates interrupts. The device's
-firmware uses DRAM interface registers to indirectly access DRAM memory. It is
-recommended to always write a minimum of 32 bytes into the DRAM.
+through DMA-mapped virtual addresses. Commands are sent to the device using
+CPU to PCI (C2P) mail box registers. These C2P registers are mapped in PCIe
+address space. Writing into the device message registers generates interrupts.
+The device's firmware uses DRAM interface registers to indirectly access DRAM
+memory. It is recommended to always write a minimum of 32 bytes into the DRAM.
 
 Driver loading
 --------------
