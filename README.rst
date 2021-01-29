@@ -135,4 +135,4 @@ ambient light sensor, use a value of 524290.
 .. code-block:: console
 
 	$ cat /etc/modprobe.d/amd_sfh.conf
-	options amd_sfh sensor_mask=1
+	options amd_sfh sensor_mask=524290
