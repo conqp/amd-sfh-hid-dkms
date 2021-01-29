@@ -15,10 +15,10 @@ Authors:
 
 Description
 ===========
-The AMD Sensor Fushion Hub (SFH) is part of a SOC on Ryzen-based platforms.
-The SFH uses HID over PCIe bus. In terms of architecture it much resmebles the ISH.
-However the major difference is, that currently HID reports
-are being generated within the kernel driver.
+The AMD Sensor Fusion Hub (SFH) is part of a SOC on Ryzen-based platforms.
+The SFH uses HID over PCIe bus. In terms of architecture it resembles the ISH.
+However, the major difference is that currently HID reports are being generated
+within the kernel driver.
 
 Block Diagram
 -------------
@@ -65,9 +65,9 @@ sensors bitmask retrieved by invoking the respective function of the PCI driver.
 
 PCI device driver (`amd-sfh`)
 ---------------------------------
-The PCI driver is responsible for making all transaction with the chip's
+The PCI driver is responsible for making all transactions with the chip's
 firmware over PCI-e.
-The sensors are being started and stopped respectively by writing commands
+The sensors are started and stopped respectively by writing commands
 and, where applicable, DRAM addresses to certain device registers.
 The sensor's input report data can then be accessed by accessing the DRAM
 through DMA-mapped virtual addresses. Commands are sent to the device using C2P
@@ -94,10 +94,10 @@ Data flow table
     +============+        Get sensor mask        |             HID client interface              |
     | PCI driver | <---------------------------- +===============================================+
     +============+    of available HID devices   | * Probe HID devices according to sensor mask. |
-          ^                                      | * Start periodical polling from DRAM.         |
+          ^                                      | * Start periodic polling from DRAM.           |
           |                                      +-----------------------------------------------+
  Start / stop sensor on                                                 |
- respective HID requsts.                                                |
+ respective HID requests.                                               |
           |                +==============================+             |
           |                |        HID ll-driver         |             |
           +--------------- +==============================+ <-----------+
@@ -108,26 +108,26 @@ Data flow table
 Quirks
 ------
 On some systems, the sensor hub has not been programmed with information about
-the sensors active on the device. This would result in no sensors being
+the sensors available on the device. This would result in no sensors being
 activated and no HID devices being spawned by the driver.
 The driver already has quirks for some devices, that automatically
-compensate for this by DMI matching and returning an appropriate sensor mask
-for the respective device.
-You can also activate the respective sensors manually, byloading the module
+compensate for this by DMI matching an appropriate sensor mask for the
+respective system.
+You can also activate the respective sensors manually, by loading the module
 `amd-sfh` with the kernel parameter `sensor_mask=<int>`.
 Available sensors are:
 
-+----------------------+----------+
-|        sensor        |   mask   |
-+======================+==========+
-| accelerometer        |  BIT(0)  |
-+----------------------+----------+
-| gyroscope            |  BIT(1)  |
-+----------------------+----------+
-| magnetometer         |  BIT(2)  |
-+----------------------+----------+
-| ambient light sensor |  BIT(19) |
-+----------------------+----------+
++----------------------+------------------+
+|        sensor        |       mask       |
++======================+==================+
+| accelerometer        | BIT(0)  =      1 |
++----------------------+------------------+
+| gyroscope            | BIT(1)  =      2 |
++----------------------+------------------+
+| magnetometer         | BIT(2)  =      4 |
++----------------------+------------------+
+| ambient light sensor | BIT(19) = 524288 |
++----------------------+------------------+
 
 To enable e.g. only the accelerometer:
 
