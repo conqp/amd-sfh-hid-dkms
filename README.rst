@@ -91,7 +91,7 @@ Data flow table
 .. code-block:: none
 
                                                  +===============================================+
-    +============+        Get sensor mask        |             HID client interface              |
+    +============+        Get sensor mask        |                   HID client                  |
     | PCI driver | <---------------------------- +===============================================+
     +============+    of available HID devices   | * Probe HID devices according to sensor mask. |
           ^                                      | * Start periodic polling from DRAM.           |
@@ -129,7 +129,8 @@ Available sensors are:
 | ambient light sensor | BIT(19) = 524288 |
 +----------------------+------------------+
 
-To enable e.g. only the accelerometer:
+The values are additive, so to enable the gyroscope and the
+ambient light sensor, use a value of 524290.
 
 .. code-block:: console
 
