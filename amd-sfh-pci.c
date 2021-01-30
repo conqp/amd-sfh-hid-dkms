@@ -180,8 +180,8 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 			     const struct pci_device_id *id)
 {
-	struct amd_sfh_data *privdata;
 	int rc;
+	struct amd_sfh_data *privdata;
 
 	privdata = devm_kzalloc(&pci_dev->dev, sizeof(*privdata), GFP_KERNEL);
 	if (!privdata)
@@ -189,6 +189,7 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 
 	privdata->pci_dev = pci_dev;
 	pci_set_drvdata(pci_dev, privdata);
+
 	rc = pcim_enable_device(pci_dev);
 	if (rc)
 		return rc;
@@ -199,13 +200,14 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 
 	privdata->mmio = pcim_iomap_table(pci_dev)[2];
 	pci_set_master(pci_dev);
+
 	rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64));
 	if (rc)
 		rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
 	if (rc)
 		return rc;
 
-	amd_sfh_reset_interrupts(privdata);
+	//amd_sfh_reset_interrupts(privdata);
 	rc = devm_request_irq(&pci_dev->dev, pci_dev->irq, amd_sfh_irq_isr,
 			      IRQF_SHARED, pci_name(pci_dev), privdata);
 	if (rc)
