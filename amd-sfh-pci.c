@@ -91,7 +91,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 
 	msleep(1000);
 
-	for (cmd_id = 0; cmd_id < AMD_SFH_CMD_INVALID; cmd_id ++) {
+	for (cmd_id = AMD_SFH_CMD_WHOAMI_REGCHIPID; cmd_id < AMD_SFH_CMD_INVALID; cmd_id ++) {
 		pci_err(pci_dev, "Enabling interrupts.");
 		writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
 		msleep(1000);
