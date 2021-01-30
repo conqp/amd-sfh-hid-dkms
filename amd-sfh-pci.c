@@ -91,7 +91,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	for (cmd_id = 0; cmd_id < AMD_SFH_CMD_INVALID; cmd_id ++) {
 		pci_err(pci_dev, "Sending command: %d", cmd_id);
 		cmd.ul = 0;
-		cmd.s.cmd_id = AMD_SFH_CMD_GET_DCD_DATA;
+		cmd.s.cmd_id = cmd_id;
 		cmd.s.sensor_id = sensor_idx;
 		parm.ul = 0;
 		writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
