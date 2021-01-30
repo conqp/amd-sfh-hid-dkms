@@ -9,6 +9,7 @@
 
 #include <linux/bitops.h>
 #include <linux/dma-mapping.h>
+#include <linux/interrupt.h>
 #include <linux/io-64-nonatomic-lo-hi.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
@@ -134,6 +135,48 @@ static void amd_sfh_pci_remove(void *privdata)
 	amd_sfh_stop_all_sensors(privdata);
 }
 
+/**
+ * amd_sfh_reset_interrupts - Resets the interrupt registers.
+ * @privdata:	The driver data
+ */
+static void amd_sfh_reset_interrupts(struct amd_sfh_data *privdata)
+{
+	int inten;
+
+	inten = readl(privdata->mmio + AMD_P2C_MSG_INTEN);
+	if (inten)
+		writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
+}
+
+/**
+ * amd_sfh_irq_isr - Handles interrupts.
+ * @irq:	The IRQ received
+ * @dev:	The driver data
+ *
+ * XXX: Disables IRQ handling to prevent IRQ flooding.
+ * Reads response information from relevant P2C registers.
+ * Releases lock to allow next command to be executed.
+ */
+static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
+{
+	int event, debuginfo1, debuginfo2, activecontrolstatus;
+	struct amd_sfh_data *privdata = dev;
+
+	amd_sfh_reset_interrupts(privdata);
+
+	/* Read response registers */
+	event = readl(privdata->mmio + AMD_P2C_MSG0);
+	debuginfo1 = readl(privdata->mmio + AMD_P2C_MSG1);
+	debuginfo2 = readl(privdata->mmio + AMD_P2C_MSG2);
+	activecontrolstatus = readl(privdata->mmio + AMD_P2C_MSG3);
+
+	pci_warn(privdata->pci_dev,
+		 "Received interrupt %d: event: %d, debuginfo1: %d, debuginfo2 %d, acs: %d.\n",
+		 irq, event, debuginfo1, debuginfo2, activecontrolstatus);
+
+	return IRQ_HANDLED;
+}
+
 static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 			     const struct pci_device_id *id)
 {
@@ -159,6 +202,12 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 	rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64));
 	if (rc)
 		rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
+	if (rc)
+		return rc;
+
+	amd_sfh_reset_interrupts(privdata);
+	rc = devm_request_irq(&pci_dev->dev, pci_dev->irq, amd_sfh_irq_isr,
+			      IRQF_SHARED, pci_name(pci_dev), privdata);
 	if (rc)
 		return rc;
 
