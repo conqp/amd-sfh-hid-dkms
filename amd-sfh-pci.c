@@ -8,6 +8,7 @@
  */
 
 #include <linux/bitops.h>
+#include <linux/delay.h>
 #include <linux/dma-mapping.h>
 #include <linux/interrupt.h>
 #include <linux/io-64-nonatomic-lo-hi.h>
@@ -89,6 +90,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 
 	for (cmd_id = 0; cmd_id < AMD_SFH_CMD_INVALID; cmd_id ++) {
+		msleep(1000);
 		pci_err(pci_dev, "Sending command: %d", cmd_id);
 		cmd.ul = 0;
 		cmd.s.cmd_id = cmd_id;
