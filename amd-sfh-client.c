@@ -55,25 +55,16 @@ static char *amd_sfh_get_sensor_name(enum sensor_idx sensor_idx)
 static struct hid_device *amd_sfh_hid_probe(struct pci_dev *pci_dev,
 					    enum sensor_idx sensor_idx)
 {
-	int rc;
-	char *name;
-	struct hid_device *hid;
 	struct amd_sfh_hid_data *hid_data;
+	struct hid_device *hid;
+	char *name;
+	int rc;
 
 	hid = hid_allocate_device();
 	if (IS_ERR(hid)) {
 		pci_err(pci_dev, "Failed to allocate HID device!\n");
 		goto err_hid_alloc;
 	}
-
-	hid_data = devm_kzalloc(&pci_dev->dev, sizeof(*hid_data), GFP_KERNEL);
-	if (!hid_data)
-		goto destroy_hid_device;
-
-	hid_data->sensor_idx = sensor_idx;
-	hid_data->pci_dev = pci_dev;
-	hid_data->hid = hid;
-	hid_data->cpu_addr = NULL;
 
 	hid->bus = BUS_I2C;
 	hid->group = HID_GROUP_SENSOR_HUB;
@@ -82,7 +73,6 @@ static struct hid_device *amd_sfh_hid_probe(struct pci_dev *pci_dev,
 	hid->version = AMD_SFH_HID_VERSION;
 	hid->type = HID_TYPE_OTHER;
 	hid->ll_driver = &amd_sfh_hid_ll_driver;
-	hid->driver_data = hid_data;
 
 	name = amd_sfh_get_sensor_name(sensor_idx);
 
@@ -94,16 +84,40 @@ static struct hid_device *amd_sfh_hid_probe(struct pci_dev *pci_dev,
 	if (rc >= sizeof(hid->phys))
 		hid_warn(hid, "Could not set HID device location.\n");
 
+	hid_data = devm_kzalloc(&hid->dev, sizeof(*hid_data), GFP_KERNEL);
+	if (!hid_data)
+		goto destroy_hid_device;
+
+	hid_data->sensor_idx = sensor_idx;
+	hid_data->pci_dev = pci_dev;
+	hid_data->hid = hid;
+	hid_data->cpu_addr = NULL;
+
+	rc = get_descriptor_size(sensor_idx, AMD_SFH_INPUT_REPORT);
+	if (rc < 0) {
+		hid_err(hid, "Failed to get input descriptor size!\n");
+		goto destroy_hid_device;
+	}
+
+	hid_data->report_size = rc;
+
+	hid_data->report_buf = devm_kzalloc(&hid->dev, hid_data->report_size,
+					    GFP_KERNEL);
+	if (!hid_data->report_buf) {
+		hid_err(hid, "Failed to allocate memory for report buffer!\n");
+		goto destroy_hid_device;
+	}
+
+	hid->driver_data = hid_data;
+
 	rc = hid_add_device(hid);
 	if (rc)	{
 		hid_err(hid, "Failed to add HID device: %d\n", rc);
-		goto free_hid_data;
+		goto destroy_hid_device;
 	}
 
 	return hid;
 
-free_hid_data:
-	devm_kfree(&pci_dev->dev, hid_data);
 destroy_hid_device:
 	hid_destroy_device(hid);
 err_hid_alloc:

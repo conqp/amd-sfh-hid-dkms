@@ -25,6 +25,8 @@
  * @hid:		Backref to the hid device
  * @cpu_addr:		The DMA mapped CPU address
  * @dma_handle:		The DMA handle
+ * @report_size:	Size of the input report buffer
+ * @report_buf:		Buffer for the input report
  */
 struct amd_sfh_hid_data {
 	enum sensor_idx sensor_idx;
@@ -33,6 +35,8 @@ struct amd_sfh_hid_data {
 	struct hid_device *hid;
 	u32 *cpu_addr;
 	dma_addr_t dma_handle;
+	size_t report_size;
+	u8 *report_buf;
 };
 
 /* The low-level driver for AMD SFH HID devices */

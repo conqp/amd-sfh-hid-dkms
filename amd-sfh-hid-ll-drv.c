@@ -32,28 +32,21 @@ static void amd_sfh_hid_poll(struct work_struct *work)
 {
 	struct amd_sfh_hid_data *hid_data;
 	struct hid_device *hid;
-	size_t size;
+	int size;
 	u8 *buf;
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
 	hid = hid_data->hid;
-	size = get_descriptor_size(hid_data->sensor_idx, AMD_SFH_INPUT_REPORT);
 
-	buf = kzalloc(size, GFP_KERNEL);
-	if (!buf)
-		goto reschedule;
-
-	size = get_input_report(hid_data->sensor_idx, 1, buf, size,
-				hid_data->cpu_addr);
+	size = get_input_report(hid_data->sensor_idx, 1, hid_data->report_buf,
+				hid_data->report_size, hid_data->cpu_addr);
 	if (size < 0) {
 		hid_err(hid, "Failed to get input report!\n");
-		goto free_buf;
+		goto reschedule;
 	}
 
 	hid_input_report(hid, HID_INPUT_REPORT, buf, size, 0);
 
-free_buf:
-	kfree(buf);
 reschedule:
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }
