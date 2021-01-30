@@ -59,7 +59,7 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 	struct amd_sfh_hid_data *hid_data;
 	int rc, size;
 
-	hid_data = devm_kzalloc(&hid->dev, sizeof(*hid_data), GFP_KERNEL);
+	hid_data = devm_kzalloc(&pci_dev->dev, sizeof(*hid_data), GFP_KERNEL);
 	if (!hid_data)
 		return ERR_PTR(-ENOMEM);
 
@@ -74,7 +74,7 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 
 	hid_data->descriptor_size = size;
 
-	hid_data->descriptor_buf = devm_kzalloc(&hid->dev, size, GFP_KERNEL);
+	hid_data->descriptor_buf = devm_kzalloc(&pci_dev->dev, size, GFP_KERNEL);
 	if (!hid_data->descriptor_buf)
 		return ERR_PTR(-ENOMEM);
 
@@ -89,7 +89,7 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 
 	hid_data->report_size = size;
 
-	hid_data->report_buf = devm_kzalloc(&hid->dev, size, GFP_KERNEL);
+	hid_data->report_buf = devm_kzalloc(&pci_dev->dev, size, GFP_KERNEL);
 	if (!hid_data->report_buf)
 		return ERR_PTR(-ENOMEM);
 
