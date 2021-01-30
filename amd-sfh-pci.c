@@ -180,7 +180,7 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 	int event, debuginfo1, debuginfo2, activecontrolstatus;
 	struct amd_sfh_data *privdata = dev;
 
-	pci_err(pci_dev, "Disabling interrupts.");
+	pci_err(privdata->pci_dev, "Disabling interrupts.");
 	writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
 	writel(0, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	//amd_sfh_reset_interrupts(privdata);
