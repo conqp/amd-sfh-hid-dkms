@@ -86,6 +86,12 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writeq(dma_handle, privdata->mmio + AMD_C2P_MSG2);
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
+
+	cmd.ul = 0;
+	cmd.s.cmd_id = AMD_SFH_CMD_DUMP_SENSOR_INFO;
+	cmd.s.interval = AMD_SFH_UPDATE_INTERVAL;
+	cmd.s.sensor_id = sensor_idx;
+	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 }
 
 /**
@@ -212,8 +218,6 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 	if (rc)
 		return rc;
 
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	rc = devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove,
 				      privdata);
 	if (rc)
