@@ -90,7 +90,7 @@ static void amd_sfh_work_poll(struct work_struct *work)
 
 	rc = amd_sfh_hid_poll(hid_data->hid);
 	if (rc)
-		hid_err(hid, "Failed to get input report!\n");
+		hid_err(hid_data->hid, "Failed to get input report!\n");
 
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }

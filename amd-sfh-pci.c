@@ -72,7 +72,6 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	struct amd_sfh_data *privdata;
 	union amd_sfh_parm parm;
 	union amd_sfh_cmd cmd;
-	int cmd_id, sid;
 
 	privdata = pci_get_drvdata(pci_dev);
 
