@@ -89,6 +89,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 
+	/*
 	for (cmd_id = 0; cmd_id < AMD_SFH_CMD_INVALID; cmd_id ++) {
 		msleep(1000);
 		pci_err(pci_dev, "Sending command: %d", cmd_id);
@@ -99,6 +100,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 		writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 		writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 	}
+	*/
 }
 
 /**
@@ -175,7 +177,7 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 	int event, debuginfo1, debuginfo2, activecontrolstatus;
 	struct amd_sfh_data *privdata = dev;
 
-	amd_sfh_reset_interrupts(privdata);
+	//amd_sfh_reset_interrupts(privdata);
 
 	/* Read response registers */
 	event = readl(privdata->mmio + AMD_P2C_MSG0);
