@@ -174,8 +174,8 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 	int i, event, debuginfo1, debuginfo2, activecontrolstatus;
 	struct amd_sfh_data *privdata = dev;
 
-	pci_err(privdata->pci_dev, "Disabling interrupts.");
-	amd_sfh_reset_interrupts(privdata);
+	//pci_err(privdata->pci_dev, "Disabling interrupts.");
+	//amd_sfh_reset_interrupts(privdata);
 
 	/* Read response registers */
 	event = readl(privdata->mmio + AMD_P2C_MSG0);
@@ -194,6 +194,7 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 		}
 	}
 
+	msleep(AMD_SFH_UPDATE_INTERVAL);
 	return IRQ_HANDLED;
 }
 
