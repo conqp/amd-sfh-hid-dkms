@@ -87,9 +87,10 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 
+	pci_err(pci_dev, "Enabling interrupts.");
+	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
 	cmd.ul = 0;
-	cmd.s.cmd_id = AMD_SFH_CMD_DUMP_SENSOR_INFO;
-	cmd.s.interval = AMD_SFH_UPDATE_INTERVAL;
+	cmd.s.cmd_id = AMD_SFH_CMD_GET_DCD_DATA;
 	cmd.s.sensor_id = sensor_idx;
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 }
@@ -176,9 +177,9 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 	debuginfo2 = readl(privdata->mmio + AMD_P2C_MSG2);
 	activecontrolstatus = readl(privdata->mmio + AMD_P2C_MSG3);
 
-	pci_warn(privdata->pci_dev,
-		 "Received interrupt %d: event: %d, debuginfo1: %d, debuginfo2 %d, acs: %d.\n",
-		 irq, event, debuginfo1, debuginfo2, activecontrolstatus);
+	pci_err(privdata->pci_dev,
+		"Received interrupt %d: event: %d, debuginfo1: %d, debuginfo2: %d, acs: %d.\n",
+		irq, event, debuginfo1, debuginfo2, activecontrolstatus);
 
 	return IRQ_HANDLED;
 }
