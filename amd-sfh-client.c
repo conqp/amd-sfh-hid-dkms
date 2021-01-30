@@ -57,42 +57,55 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 					     enum sensor_idx sensor_idx)
 {
 	struct amd_sfh_hid_data *hid_data;
-	int rc, size;
+	int rc;
 
 	hid_data = devm_kzalloc(&pci_dev->dev, sizeof(*hid_data), GFP_KERNEL);
-	if (!hid_data)
-		return ERR_PTR(-ENOMEM);
+	if (!hid_data) {
+		rc = -ENOMEM;
+		goto error;
+	}
 
 	hid_data->hid = hid;
 	hid_data->pci_dev = pci_dev;
 	hid_data->sensor_idx = sensor_idx;
 	hid_data->cpu_addr = NULL;
 
-	size = get_descriptor_size(sensor_idx, AMD_SFH_DESCRIPTOR);
-	if (size < 0)
-		return ERR_PTR(size);
+	rc = get_descriptor_size(sensor_idx, AMD_SFH_DESCRIPTOR);
+	if (rc < 0)
+		goto free_hid_data;
 
-	hid_data->descriptor_size = size;
+	hid_data->descriptor_size = rc;
 
-	hid_data->descriptor_buf = devm_kzalloc(&pci_dev->dev, size, GFP_KERNEL);
-	if (!hid_data->descriptor_buf)
-		return ERR_PTR(-ENOMEM);
+	hid_data->descriptor_buf = devm_kzalloc(&pci_dev->dev, rc, GFP_KERNEL);
+	if (!hid_data->descriptor_buf) {
+		rc = -ENOMEM;
+		goto free_hid_data;
+	}
 
 	rc = get_report_descriptor(sensor_idx, hid_data->descriptor_buf);
 	if (rc)
-		return ERR_PTR(rc);
+		goto free_descriptor;
 
-	size = get_descriptor_size(sensor_idx, AMD_SFH_INPUT_REPORT);
-	if (size < 0)
-		return ERR_PTR(size);
+	rc = get_descriptor_size(sensor_idx, AMD_SFH_INPUT_REPORT);
+	if (rc < 0)
+		goto free_descriptor;
 
-	hid_data->report_size = size;
+	hid_data->report_size = rc;
 
-	hid_data->report_buf = devm_kzalloc(&pci_dev->dev, size, GFP_KERNEL);
-	if (!hid_data->report_buf)
-		return ERR_PTR(-ENOMEM);
+	hid_data->report_buf = devm_kzalloc(&pci_dev->dev, rc, GFP_KERNEL);
+	if (!hid_data->report_buf) {
+		rc = -ENOMEM;
+		goto free_descriptor;
+	}
 
 	return hid_data;
+
+free_descriptor:
+	devm_kfree(&pci_dev->dev, hid_data->descriptor_buf);
+free_hid_data:
+	devm_kfree(&pci_dev->dev, hid_data);
+error:
+	return ERR_PTR(rc);
 }
 
 /**
@@ -110,8 +123,11 @@ static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
 	int rc;
 
 	hid = hid_allocate_device();
-	if (IS_ERR(hid))
+	if (IS_ERR(hid)) {
+		pci_err(pci_dev, "HID device allocation returned: %ld",
+			PTR_ERR(hid));
 		goto err_hid_alloc;
+	}
 
 	hid->bus = BUS_I2C;
 	hid->group = HID_GROUP_SENSOR_HUB;

@@ -32,24 +32,9 @@ static void amd_sfh_hid_poll(struct work_struct *work)
 	struct amd_sfh_hid_data *hid_data;
 	struct hid_device *hid;
 	int size;
-	u8 *buf;
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
 	hid = hid_data->hid;
-	hid_err(hid, "poll");
-	hid_err(hid, "sensor_idx: %d", hid_data->sensor_idx);
-
-	if (!hid_data->report_buf)
-		hid_err(hid, "report_buf: err");
-	else
-		hid_err(hid, "report_buf: ok");
-
-	hid_err(hid, "report_size: %ld", hid_data->report_size);
-
-	if (!hid_data->cpu_addr)
-		hid_err(hid, "cpu_addr: err");
-	else
-		hid_err(hid, "cpu_addr: ok");
 
 	size = get_input_report(hid_data->sensor_idx, 1, hid_data->report_buf,
 				hid_data->report_size, hid_data->cpu_addr);
@@ -58,7 +43,7 @@ static void amd_sfh_hid_poll(struct work_struct *work)
 		goto reschedule;
 	}
 
-	hid_input_report(hid, HID_INPUT_REPORT, buf, size, 0);
+	hid_input_report(hid, HID_INPUT_REPORT, hid_data->report_buf, size, 0);
 
 reschedule:
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
