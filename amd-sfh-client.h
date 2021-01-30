@@ -9,11 +9,13 @@
 #ifndef AMD_SFH_CLIENT_H
 #define AMD_SFH_CLIENT_H
 
+#include <linux/hid.h>
 #include <linux/pci.h>
 
 #include "amd-sfh.h"
 
 void amd_sfh_client_init(struct amd_sfh_data *privdata);
 void amd_sfh_client_deinit(struct amd_sfh_data *privdata);
+int amd_sfh_hid_poll(struct hid_device *hid);
 
 #endif

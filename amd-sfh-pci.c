@@ -89,23 +89,16 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 
-	msleep(1000);
+	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
 
-	for (cmd_id = AMD_SFH_CMD_DUMP_SENSOR_INFO; cmd_id < AMD_SFH_CMD_INVALID; cmd_id++) {
-		for (sid = ACCEL_IDX; sid <= ALS_IDX; sid++) {
-			pci_err(pci_dev, "Enabling interrupts for: %d", sid);
-			writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
-			msleep(1000);
-			pci_err(pci_dev, "Sending command: %d", cmd_id);
-			cmd.ul = 0;
-			cmd.s.cmd_id = cmd_id;
-			cmd.s.sensor_id = sid;
-			parm.ul = 0;
-			writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
-			writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
-			msleep(1000);
-		}
-	}
+	cmd.ul = 0;
+	cmd.s.cmd_id = AMD_SFH_CMD_NUMBER_OF_SENSORS_DISCOVERED;
+	cmd.s.sensor_id = sensor_idx;
+
+	parm.ul = 0;
+
+	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
+	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 }
 
 /**
@@ -179,7 +172,7 @@ static void amd_sfh_reset_interrupts(struct amd_sfh_data *privdata)
  */
 static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 {
-	int event, debuginfo1, debuginfo2, activecontrolstatus;
+	int i, event, debuginfo1, debuginfo2, activecontrolstatus;
 	struct amd_sfh_data *privdata = dev;
 
 	pci_err(privdata->pci_dev, "Disabling interrupts.");
@@ -190,10 +183,17 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 	debuginfo1 = readl(privdata->mmio + AMD_P2C_MSG1);
 	debuginfo2 = readl(privdata->mmio + AMD_P2C_MSG2);
 	activecontrolstatus = readl(privdata->mmio + AMD_P2C_MSG3);
-
 	pci_err(privdata->pci_dev,
 		"Received interrupt %d: event: %d, debuginfo1: %d, debuginfo2: %d, acs: %d.\n",
 		irq, event, debuginfo1, debuginfo2, activecontrolstatus);
+
+	pci_err(privdata->pci_dev, "Polling HID devices.\n");
+	for (i = 0; i < AMD_SFH_MAX_SENSORS; i++) {
+		if (privdata->sensors[i]) {
+			pci_err(privdata->sensors[i], "Polling %d\n", i);
+			amd_sfh_hid_poll(privdata->sensors[i]);
+		}
+	}
 
 	return IRQ_HANDLED;
 }
