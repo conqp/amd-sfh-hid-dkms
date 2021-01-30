@@ -219,7 +219,7 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 		return rc;
 
 	amd_sfh_client_init(privdata);
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
+	writel(1, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	return rc;
 }
 
