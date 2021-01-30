@@ -46,52 +46,38 @@ static char *amd_sfh_get_sensor_name(enum sensor_idx sensor_idx)
 
 /**
  * amd_sfh_hid_poll - Updates the input report for a HID device.
- * @hid:	The hid device
- *
- * Polls input reports from the respective HID devices and submits
- * them by invoking hid_input_report() from hid-core.
- */
-int amd_sfh_hid_poll(struct hid_device *hid)
-{
-	struct amd_sfh_hid_data *hid_data;
-	int size;
-	u8 *buf;
-
-	hid_data = hid->driver_data;
-	size = get_descriptor_size(hid_data->sensor_idx, AMD_SFH_INPUT_REPORT);
-
-	buf = kzalloc(size, GFP_KERNEL);
-	if (!buf)
-		return -ENOMEM;
-
-	size = get_input_report(hid_data->sensor_idx, 1, buf, size,
-				hid_data->cpu_addr);
-	if (size >= 0)
-		hid_input_report(hid, HID_INPUT_REPORT, buf, size, 0);
-
-free_buf:
-	kfree(buf);
-	return size;
-}
-
-/**
- * amd_sfh_work_poll - Updates the input report for a HID device.
  * @work:	The delayed work
  *
  * Polls input reports from the respective HID devices and submits
  * them by invoking hid_input_report() from hid-core.
  */
-static void amd_sfh_work_poll(struct work_struct *work)
+static void amd_sfh_hid_poll(struct work_struct *work)
 {
 	struct amd_sfh_hid_data *hid_data;
-	int rc;
+	struct hid_device *hid;
+	size_t size;
+	u8 *buf;
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
+	hid = hid_data->hid;
+	size = get_descriptor_size(hid_data->sensor_idx, AMD_SFH_INPUT_REPORT);
 
-	rc = amd_sfh_hid_poll(hid_data->hid);
-	if (rc)
-		hid_err(hid_data->hid, "Failed to get input report!\n");
+	buf = kzalloc(size, GFP_KERNEL);
+	if (!buf)
+		goto reschedule;
 
+	size = get_input_report(hid_data->sensor_idx, 1, buf, size,
+				hid_data->cpu_addr);
+	if (size < 0) {
+		hid_err(hid, "Failed to get input report!\n");
+		goto free_buf;
+	}
+
+	hid_input_report(hid, HID_INPUT_REPORT, buf, size, 0);
+
+free_buf:
+	kfree(buf);
+reschedule:
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }
 
@@ -126,7 +112,7 @@ static struct hid_device *amd_sfh_hid_probe(struct pci_dev *pci_dev,
 	hid_data->hid = hid;
 	hid_data->cpu_addr = NULL;
 
-	//INIT_DELAYED_WORK(&hid_data->work, amd_sfh_work_poll);
+	INIT_DELAYED_WORK(&hid_data->work, amd_sfh_hid_poll);
 
 	hid->bus = BUS_I2C;
 	hid->group = HID_GROUP_SENSOR_HUB;

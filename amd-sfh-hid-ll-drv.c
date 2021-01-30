@@ -36,7 +36,6 @@ static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 	size_t size;
 	struct amd_sfh_hid_data *hid_data;
 
-	hid_err(hid, "parse.\n");
 	hid_data = hid->driver_data;
 
 	size = get_descriptor_size(hid_data->sensor_idx, AMD_SFH_DESCRIPTOR);
@@ -75,7 +74,6 @@ static int amd_sfh_hid_ll_start(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "start.\n");
 	hid_data->cpu_addr = dma_alloc_coherent(&hid_data->pci_dev->dev,
 						AMD_SFH_HID_DMA_SIZE,
 						&hid_data->dma_handle,
@@ -96,7 +94,6 @@ static void amd_sfh_hid_ll_stop(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "stop.\n");
 	dma_free_coherent(&hid_data->pci_dev->dev, AMD_SFH_HID_DMA_SIZE,
 			  hid_data->cpu_addr, hid_data->dma_handle);
 	hid_data->cpu_addr = NULL;
@@ -114,10 +111,9 @@ static int amd_sfh_hid_ll_open(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "open.\n");
 	amd_sfh_start_sensor(hid_data->pci_dev, hid_data->sensor_idx,
 			     hid_data->dma_handle);
-	//schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
+	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 	return 0;
 }
 
@@ -131,8 +127,7 @@ static void amd_sfh_hid_ll_close(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "close.\n");
-	//cancel_delayed_work_sync(&hid_data->work);
+	cancel_delayed_work_sync(&hid_data->work);
 	amd_sfh_stop_sensor(hid_data->pci_dev, hid_data->sensor_idx);
 }
 
@@ -155,7 +150,6 @@ static int amd_sfh_hid_ll_raw_request(struct hid_device *hid,
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "raw_request.\n");
 	switch (rtype) {
 	case HID_FEATURE_REPORT:
 		return get_feature_report(hid_data->sensor_idx, reportnum, buf,
@@ -169,12 +163,6 @@ static int amd_sfh_hid_ll_raw_request(struct hid_device *hid,
 	}
 }
 
-static int amd_sfh_hid_ll_wait(struct hid_device *hid)
-{
-	hid_err(hid, "wait.\n");
-	return 0;
-}
-
 /**
  * The HID low-level driver for SFH HID devices.
  */
@@ -185,5 +173,4 @@ struct hid_ll_driver amd_sfh_hid_ll_driver = {
 	.open	=	amd_sfh_hid_ll_open,
 	.close	=	amd_sfh_hid_ll_close,
 	.raw_request  =	amd_sfh_hid_ll_raw_request,
-	.wait	=	amd_sfh_hid_ll_wait,
 };

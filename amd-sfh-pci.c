@@ -8,9 +8,7 @@
  */
 
 #include <linux/bitops.h>
-#include <linux/delay.h>
 #include <linux/dma-mapping.h>
-#include <linux/interrupt.h>
 #include <linux/io-64-nonatomic-lo-hi.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
@@ -22,7 +20,7 @@
 #include "amd-sfh-pci.h"
 #include "amd-sfh-quirks.h"
 
-#define DRIVER_NAME		"amd-sfh"
+#define DRIVER_NAME		"amd_sfh"
 #define PCI_DEVICE_ID_AMD_SFH	0x15E4
 
 /* Module parameters */
@@ -87,17 +85,6 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writeq(dma_handle, privdata->mmio + AMD_C2P_MSG2);
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
-
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
-
-	cmd.ul = 0;
-	cmd.s.cmd_id = AMD_SFH_CMD_NUMBER_OF_SENSORS_DISCOVERED;
-	cmd.s.sensor_id = sensor_idx;
-
-	parm.ul = 0;
-
-	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
-	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 }
 
 /**
@@ -147,62 +134,11 @@ static void amd_sfh_pci_remove(void *privdata)
 	amd_sfh_stop_all_sensors(privdata);
 }
 
-/**
- * amd_sfh_reset_interrupts - Resets the interrupt registers.
- * @privdata:	The driver data
- */
-static void amd_sfh_reset_interrupts(struct amd_sfh_data *privdata)
-{
-	int inten;
-
-	inten = readl(privdata->mmio + AMD_P2C_MSG_INTEN);
-	if (inten)
-		writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
-}
-
-/**
- * amd_sfh_irq_isr - Handles interrupts.
- * @irq:	The IRQ received
- * @dev:	The driver data
- *
- * XXX: Disables IRQ handling to prevent IRQ flooding.
- * Reads response information from relevant P2C registers.
- * Releases lock to allow next command to be executed.
- */
-static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
-{
-	int i, event, debuginfo1, debuginfo2, activecontrolstatus;
-	struct amd_sfh_data *privdata = dev;
-
-	//pci_err(privdata->pci_dev, "Disabling interrupts.");
-	//amd_sfh_reset_interrupts(privdata);
-
-	/* Read response registers */
-	event = readl(privdata->mmio + AMD_P2C_MSG0);
-	debuginfo1 = readl(privdata->mmio + AMD_P2C_MSG1);
-	debuginfo2 = readl(privdata->mmio + AMD_P2C_MSG2);
-	activecontrolstatus = readl(privdata->mmio + AMD_P2C_MSG3);
-	pci_err(privdata->pci_dev,
-		"Received interrupt %d: event: %d, debuginfo1: %d, debuginfo2: %d, acs: %d.\n",
-		irq, event, debuginfo1, debuginfo2, activecontrolstatus);
-
-	pci_err(privdata->pci_dev, "Polling HID devices.\n");
-	for (i = 0; i < AMD_SFH_MAX_SENSORS; i++) {
-		if (privdata->sensors[i]) {
-			pci_err(privdata->sensors[i], "Polling %d\n", i);
-			amd_sfh_hid_poll(privdata->sensors[i]);
-		}
-	}
-
-	msleep(AMD_SFH_UPDATE_INTERVAL);
-	return IRQ_HANDLED;
-}
-
 static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 			     const struct pci_device_id *id)
 {
-	int rc;
 	struct amd_sfh_data *privdata;
+	int rc;
 
 	privdata = devm_kzalloc(&pci_dev->dev, sizeof(*privdata), GFP_KERNEL);
 	if (!privdata)
@@ -210,7 +146,6 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 
 	privdata->pci_dev = pci_dev;
 	pci_set_drvdata(pci_dev, privdata);
-
 	rc = pcim_enable_device(pci_dev);
 	if (rc)
 		return rc;
@@ -221,15 +156,9 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 
 	privdata->mmio = pcim_iomap_table(pci_dev)[2];
 	pci_set_master(pci_dev);
-
 	rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64));
 	if (rc)
 		rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
-	if (rc)
-		return rc;
-
-	rc = devm_request_irq(&pci_dev->dev, pci_dev->irq, amd_sfh_irq_isr,
-			      IRQF_SHARED, pci_name(pci_dev), privdata);
 	if (rc)
 		return rc;
 
@@ -249,7 +178,7 @@ static const struct pci_device_id amd_sfh_pci_tbl[] = {
 MODULE_DEVICE_TABLE(pci, amd_sfh_pci_tbl);
 
 static struct pci_driver amd_sfh_pci_driver = {
-	.name		= DRIVER_NAME,
+	.name		= "amd-sfh-pci",
 	.id_table	= amd_sfh_pci_tbl,
 	.probe		= amd_sfh_pci_probe,
 };
