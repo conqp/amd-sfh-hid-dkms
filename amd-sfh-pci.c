@@ -21,7 +21,7 @@
 #include "amd-sfh-pci.h"
 #include "amd-sfh-quirks.h"
 
-#define DRIVER_NAME		"amd_sfh"
+#define DRIVER_NAME		"amd-sfh"
 #define PCI_DEVICE_ID_AMD_SFH	0x15E4
 
 /* Module parameters */
@@ -207,14 +207,13 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 	if (rc)
 		return rc;
 
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTSTS);
-	//amd_sfh_reset_interrupts(privdata);
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
 	rc = devm_request_irq(&pci_dev->dev, pci_dev->irq, amd_sfh_irq_isr,
 			      IRQF_SHARED, pci_name(pci_dev), privdata);
 	if (rc)
 		return rc;
 
+	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
+	writel(1, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	rc = devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove,
 				      privdata);
 	if (rc)
@@ -231,7 +230,7 @@ static const struct pci_device_id amd_sfh_pci_tbl[] = {
 MODULE_DEVICE_TABLE(pci, amd_sfh_pci_tbl);
 
 static struct pci_driver amd_sfh_pci_driver = {
-	.name		= "amd-sfh-pci",
+	.name		= DRIVER_NAME,
 	.id_table	= amd_sfh_pci_tbl,
 	.probe		= amd_sfh_pci_probe,
 };
