@@ -172,6 +172,7 @@ static int amd_sfh_hid_ll_raw_request(struct hid_device *hid,
 static int amd_sfh_hid_ll_wait(struct hid_device *hid)
 {
 	hid_err(hid, "wait.\n");
+	return 0;
 }
 
 /**
@@ -184,5 +185,5 @@ struct hid_ll_driver amd_sfh_hid_ll_driver = {
 	.open	=	amd_sfh_hid_ll_open,
 	.close	=	amd_sfh_hid_ll_close,
 	.raw_request  =	amd_sfh_hid_ll_raw_request,
-	.wait	=	amd_sfh_hid_ll_wait
+	.wait	=	amd_sfh_hid_ll_wait,
 };
