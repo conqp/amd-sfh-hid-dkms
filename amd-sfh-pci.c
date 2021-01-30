@@ -103,9 +103,6 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 		writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 		writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 		msleep(1000);
-		pci_err(pci_dev, "Disabling interrupts.");
-		writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
-		writel(0, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	}
 }
 
@@ -183,6 +180,9 @@ static irqreturn_t amd_sfh_irq_isr(int irq, void *dev)
 	int event, debuginfo1, debuginfo2, activecontrolstatus;
 	struct amd_sfh_data *privdata = dev;
 
+	pci_err(pci_dev, "Disabling interrupts.");
+	writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
+	writel(0, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	//amd_sfh_reset_interrupts(privdata);
 
 	/* Read response registers */
