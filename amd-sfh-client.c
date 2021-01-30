@@ -68,7 +68,7 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 	hid_data->sensor_idx = sensor_idx;
 	hid_data->cpu_addr = NULL;
 
-	size = get_descriptor_size(hid_data->sensor_idx, AMD_SFH_DESCRIPTOR);
+	size = get_descriptor_size(sensor_idx, AMD_SFH_DESCRIPTOR);
 	if (size < 0)
 		return ERR_PTR(size);
 
@@ -78,8 +78,7 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 	if (!hid_data->descriptor_buf)
 		return ERR_PTR(-ENOMEM);
 
-	rc = get_report_descriptor(hid_data->sensor_idx,
-				   hid_data->descriptor_buf);
+	rc = get_report_descriptor(sensor_idx, hid_data->descriptor_buf);
 	if (rc)
 		return ERR_PTR(rc);
 
