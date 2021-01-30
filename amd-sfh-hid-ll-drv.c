@@ -169,7 +169,7 @@ static int amd_sfh_hid_ll_raw_request(struct hid_device *hid,
 	}
 }
 
-int amd_sfh_hid_ll_wait(struct hid_device *hid)
+static int amd_sfh_hid_ll_wait(struct hid_device *hid)
 {
 	hid_err(hid, "wait.\n");
 }
