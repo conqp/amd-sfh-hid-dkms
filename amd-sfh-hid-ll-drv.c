@@ -11,7 +11,6 @@
 #include <linux/hid.h>
 #include <linux/pci.h>
 #include <linux/sched.h>
-#include <linux/wait.h>
 #include <linux/workqueue.h>
 
 #include "amd-sfh.h"
@@ -61,36 +60,10 @@ reschedule:
  */
 static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 {
-	int rc;
-	u8 *buf;
-	size_t size;
-	struct amd_sfh_hid_data *hid_data;
+	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_data = hid->driver_data;
-
-	size = get_descriptor_size(hid_data->sensor_idx, AMD_SFH_DESCRIPTOR);
-	if (size < 0) {
-		hid_err(hid, "Failed to get report descriptor size!\n");
-		return -EINVAL;
-	}
-
-	buf = kzalloc(size, GFP_KERNEL);
-	if (!buf)
-		return -ENOMEM;
-
-	rc = get_report_descriptor(hid_data->sensor_idx, buf);
-	if (rc) {
-		hid_err(hid, "Failed to get report descriptor!\n");
-		goto free_buf;
-	}
-
-	rc = hid_parse_report(hid, buf, size);
-	if (rc)
-		hid_err(hid, "Failed to parse HID report!\n");
-
-free_buf:
-	kfree(buf);
-	return rc;
+	return hid_parse_report(hid, hid_data->descriptor_buf,
+				hid_data->descriptor_size);
 }
 
 /**
