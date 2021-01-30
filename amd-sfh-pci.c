@@ -207,7 +207,8 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 	if (rc)
 		return rc;
 
-	//amd_sfh_reset_interrupts(privdata);
+	amd_sfh_reset_interrupts(privdata);
+	writel(1, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	rc = devm_request_irq(&pci_dev->dev, pci_dev->irq, amd_sfh_irq_isr,
 			      IRQF_SHARED, pci_name(pci_dev), privdata);
 	if (rc)
@@ -219,7 +220,6 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 		return rc;
 
 	amd_sfh_client_init(privdata);
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	return rc;
 }
 
