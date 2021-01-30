@@ -71,6 +71,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	struct amd_sfh_data *privdata;
 	union amd_sfh_parm parm;
 	union amd_sfh_cmd cmd;
+	int cmd_id;
 
 	privdata = pci_get_drvdata(pci_dev);
 
@@ -87,12 +88,15 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 
-	pci_err(pci_dev, "Enabling interrupts.");
-	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
-	cmd.ul = 0;
-	cmd.s.cmd_id = AMD_SFH_CMD_GET_DCD_DATA;
-	cmd.s.sensor_id = sensor_idx;
-	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
+	for (cmd_id = 0; cmd_id < AMD_SFH_CMD_INVALID; cmd_id ++) {
+		pci_err(pci_dev, "Sending command: %d", cmd_id);
+		cmd.ul = 0;
+		cmd.s.cmd_id = AMD_SFH_CMD_GET_DCD_DATA;
+		cmd.s.sensor_id = sensor_idx;
+		parm.ul = 0;
+		writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
+		writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
+	}
 }
 
 /**
@@ -218,6 +222,9 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 			      IRQF_SHARED, pci_name(pci_dev), privdata);
 	if (rc)
 		return rc;
+
+	pci_err(pci_dev, "Enabling interrupts.");
+	writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
 
 	rc = devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove,
 				      privdata);
