@@ -89,11 +89,9 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 	writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
 
+	msleep(1000);
+
 	for (cmd_id = 0; cmd_id < AMD_SFH_CMD_INVALID; cmd_id ++) {
-		pci_err(pci_dev, "Disabling interrupts.");
-		writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
-		writel(0, privdata->mmio + AMD_P2C_MSG_INTSTS);
-		msleep(1000);
 		pci_err(pci_dev, "Enabling interrupts.");
 		writel(1, privdata->mmio + AMD_P2C_MSG_INTEN);
 		msleep(1000);
@@ -104,6 +102,10 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 		parm.ul = 0;
 		writel(parm.ul, privdata->mmio + AMD_C2P_MSG1);
 		writel(cmd.ul, privdata->mmio + AMD_C2P_MSG0);
+		msleep(1000);
+		pci_err(pci_dev, "Disabling interrupts.");
+		writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
+		writel(0, privdata->mmio + AMD_P2C_MSG_INTSTS);
 	}
 }
 
