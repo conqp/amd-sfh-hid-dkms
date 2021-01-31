@@ -17,6 +17,7 @@
 #include "amd-sfh-hid-ll-drv.h"
 #include "amd-sfh-hid-reports.h"
 #include "amd-sfh-pci.h"
+#include "amd-sfh-report-descriptors.h"
 
 #define AMD_SFH_HID_DMA_SIZE	(sizeof(int) * 8)
 
@@ -30,22 +31,10 @@
 static void amd_sfh_hid_poll(struct work_struct *work)
 {
 	struct amd_sfh_hid_data *hid_data;
-	struct hid_device *hid;
-	int size;
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
-	hid = hid_data->hid;
-
-	size = get_input_report(hid_data->sensor_idx, 1, hid_data->report_buf,
-				hid_data->report_size, hid_data->cpu_addr);
-	if (size < 0) {
-		hid_err(hid, "Failed to get input report!\n");
-		goto reschedule;
-	}
-
-	hid_input_report(hid, HID_INPUT_REPORT, hid_data->report_buf, size, 0);
-
-reschedule:
+	hid_hw_raw_request(hid_data->hid, 1, hid_data->report_buf,
+			   hid_data->report_size, HID_INPUT_REPORT, 0);
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }
 
@@ -59,10 +48,37 @@ reschedule:
  */
 static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 {
-	struct amd_sfh_hid_data *hid_data = hid->driver_data;
+	struct amd_sfh_hid_data *hid_data;
+	size_t size;
+	u8 *buf;
+	int rc;
 
-	return hid_parse_report(hid, hid_data->descriptor_buf,
-				hid_data->descriptor_size);
+	hid_data = hid->driver_data;
+
+	switch (hid_data->sensor_idx) {
+	case ACCEL_IDX:
+		size = strlen(accel3_report_descriptor);
+		buf = kstrndup(accel3_report_descriptor, size, GFP_KERNEL);
+		break;
+	case GYRO_IDX:
+		size = strlen(gyro3_report_descriptor);
+		buf = kstrndup(gyro3_report_descriptor, size, GFP_KERNEL);
+		break;
+	case MAG_IDX:
+		size = strlen(magno_report_descriptor);
+		buf = kstrndup(magno_report_descriptor, size, GFP_KERNEL);
+		break;
+	case ALS_IDX:
+		size = strlen(als_report_descriptor);
+		buf = kstrndup(als_report_descriptor, size, GFP_KERNEL);
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	rc = hid_parse_report(hid, buf, size);
+	kfree(buf);
+	return rc;
 }
 
 /**
@@ -155,13 +171,45 @@ static int amd_sfh_hid_ll_raw_request(struct hid_device *hid,
 
 	switch (rtype) {
 	case HID_FEATURE_REPORT:
-		return get_feature_report(hid_data->sensor_idx, reportnum, buf,
-					  len);
+		if (!buf)
+			return -ENOBUFS;
+
+		switch (hid_data->sensor_idx) {
+		case ACCEL_IDX:
+			return get_accel_feature_report(reportnum, buf, len);
+		case GYRO_IDX:
+			return get_gyro_feature_report(reportnum, buf, len);
+		case MAG_IDX:
+			return get_mag_feature_report(reportnum, buf, len);
+		case ALS_IDX:
+			return get_als_feature_report(reportnum, buf, len);
+		default:
+			return -EINVAL;
+		}
 	case HID_INPUT_REPORT:
-		return get_input_report(hid_data->sensor_idx, reportnum, buf,
-					len, hid_data->cpu_addr);
+		if (!buf)
+			return -ENOBUFS;
+
+		if (!hid_data->cpu_addr)
+			return -EIO;
+
+		switch (hid_data->sensor_idx) {
+		case ACCEL_IDX:
+			return get_accel_input_report(reportnum, buf, len,
+						      hid_data->cpu_addr);
+		case GYRO_IDX:
+			return get_gyro_input_report(reportnum, buf, len,
+						     hid_data->cpu_addr);
+		case MAG_IDX:
+			return get_mag_input_report(reportnum, buf, len,
+						    hid_data->cpu_addr);
+		case ALS_IDX:
+			return get_als_input_report(reportnum, buf, len,
+						    hid_data->cpu_addr);
+		default:
+			return -EINVAL;
+		}
 	default:
-		hid_err(hid, "Unsupported report type: %u\n", rtype);
 		return -EINVAL;
 	}
 }

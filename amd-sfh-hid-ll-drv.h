@@ -37,8 +37,6 @@ struct amd_sfh_hid_data {
 	enum sensor_idx sensor_idx;
 	u32 *cpu_addr;
 	dma_addr_t dma_handle;
-	size_t descriptor_size;
-	u8 *descriptor_buf;
 	size_t report_size;
 	u8 *report_buf;
 };

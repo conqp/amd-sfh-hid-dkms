@@ -57,55 +57,40 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 					     enum sensor_idx sensor_idx)
 {
 	struct amd_sfh_hid_data *hid_data;
-	int rc;
 
 	hid_data = devm_kzalloc(&pci_dev->dev, sizeof(*hid_data), GFP_KERNEL);
-	if (!hid_data) {
-		rc = -ENOMEM;
-		goto error;
-	}
+	if (!hid_data)
+		return ERR_PTR(-ENOMEM);
 
 	hid_data->hid = hid;
 	hid_data->pci_dev = pci_dev;
 	hid_data->sensor_idx = sensor_idx;
 	hid_data->cpu_addr = NULL;
 
-	rc = get_descriptor_size(sensor_idx, AMD_SFH_DESCRIPTOR);
-	if (rc < 0)
-		goto free_hid_data;
-
-	hid_data->descriptor_size = rc;
-
-	hid_data->descriptor_buf = devm_kzalloc(&pci_dev->dev, rc, GFP_KERNEL);
-	if (!hid_data->descriptor_buf) {
-		rc = -ENOMEM;
-		goto free_hid_data;
+	switch (sensor_idx) {
+	case ACCEL_IDX:
+		hid_data->report_size = sizeof(struct accel3_input_report);
+		break;
+	case GYRO_IDX:
+		hid_data->report_size = sizeof(struct gyro_input_report);
+		break;
+	case MAG_IDX:
+		hid_data->report_size = sizeof(struct magno_input_report);
+		break;
+	case ALS_IDX:
+		hid_data->report_size = sizeof(struct als_input_report);
+		break;
+	default:
+		return ERR_PTR(-EINVAL);
 	}
 
-	rc = get_report_descriptor(sensor_idx, hid_data->descriptor_buf);
-	if (rc)
-		goto free_descriptor;
-
-	rc = get_descriptor_size(sensor_idx, AMD_SFH_INPUT_REPORT);
-	if (rc < 0)
-		goto free_descriptor;
-
-	hid_data->report_size = rc;
-
-	hid_data->report_buf = devm_kzalloc(&pci_dev->dev, rc, GFP_KERNEL);
-	if (!hid_data->report_buf) {
-		rc = -ENOMEM;
-		goto free_descriptor;
-	}
+	hid_data->report_buf = devm_kzalloc(&pci_dev->dev,
+					    hid_data->report_size,
+					    GFP_KERNEL);
+	if (!hid_data->report_buf)
+		return ERR_PTR(-ENOMEM);
 
 	return hid_data;
-
-free_descriptor:
-	devm_kfree(&pci_dev->dev, hid_data->descriptor_buf);
-free_hid_data:
-	devm_kfree(&pci_dev->dev, hid_data);
-error:
-	return ERR_PTR(rc);
 }
 
 /**

@@ -2,22 +2,12 @@
 /*
  * HID report and report stuructures and routines
  *
- * Author: Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
+ * Authors:	Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
+ * 		Richard Neumann <mail@richard-neumann.de>
  */
 
 #ifndef AMD_SFH_HID_REPORTS_H
 #define AMD_SFH_HID_REPORTS_H
-
-#include "amd-sfh.h"
-
-/**
- * desc_type - Report descriptor types.
- */
-enum desc_type {
-	AMD_SFH_DESCRIPTOR,
-	AMD_SFH_INPUT_REPORT,
-	AMD_SFH_FEATURE_REPORT,
-};
 
 struct common_features {
 	u8 report_id;
@@ -93,10 +83,12 @@ struct als_input_report {
 	int illuminance;
 } __packed;
 
-int get_report_descriptor(enum sensor_idx sensor_idx, u8 *buf);
-int get_descriptor_size(enum sensor_idx sensor_idx, enum desc_type desc_type);
-int get_feature_report(enum sensor_idx sensor_idx, int report_id, u8 *buf,
-		       size_t len);
-int get_input_report(enum sensor_idx sensor_idx, int report_id, u8 *buf,
-		     size_t len, u32 *sensor_virt_addr);
+int get_accel_feature_report(int report_id, u8 *buf, size_t len);
+int get_gyro_feature_report(int report_id, u8 *buf, size_t len);
+int get_mag_feature_report(int report_id, u8 *buf, size_t len);
+int get_als_feature_report(int report_id, u8 *buf, size_t len);
+int get_accel_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr);
+int get_gyro_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr);
+int get_mag_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr);
+int get_als_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr);
 #endif

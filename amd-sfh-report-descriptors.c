@@ -2,14 +2,14 @@
 /*
  * AMD Sensor Fusion Hub HID descriptor definitions
  *
- * Author:	Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
+ * Authors:	Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
+ * 		Richard Neumann <mail@richard-neumann.de>
  */
 
-#ifndef AMD_SFH_HID_DESCRIPTORS_H
-#define AMD_SFH_HID_DESCRIPTORS_H
+#include "amd-sfh-descriptors.h"
 
 // Accelerometer 3D Sensor
-static const u8 accel3_report_descriptor[] = {
+const unsigned char accel3_report_descriptor[] = {
 0x05, 0x20,		  /* Usage page */
 0x09, 0x73,		  /* Motion type Accel 3D */
 0xA1, 0x00,		  /* HID Collection (Physical) */
@@ -177,7 +177,7 @@ static const u8 accel3_report_descriptor[] = {
 0xC0			/* HID end collection */
 };
 
-const u8 gyro3_report_descriptor[] = {
+const unsigned char gyro3_report_descriptor[] = {
 0x05, 0x20,		/* Usage page */
 0x09, 0x76,		/* Motion type Gyro3D */
 0xA1, 0x00,		/* HID Collection (Physical) */
@@ -338,7 +338,7 @@ const u8 gyro3_report_descriptor[] = {
 0xC0,			/* HID end collection */
 };
 
-const u8 magno_report_descriptor[] = {
+const unsigned char magno_report_descriptor[] = {
 0x05, 0x20,		/* Usage page */
 0x09, 0x83,		/* Motion type Orientation compass 3D */
 0xA1, 0x00,		/* HID Collection (Physical) */
@@ -510,7 +510,7 @@ const u8 magno_report_descriptor[] = {
 0xC0				/* HID end collection */
 };
 
-const u8 als_report_descriptor[] = {
+const unsigned char als_report_descriptor[] = {
 0x05, 0x20,	/* HID usage page sensor */
 0x09, 0x41,	/* HID usage sensor type Ambientlight  */
 0xA1, 0x00,	/* HID Collection (Physical) */
@@ -641,4 +641,3 @@ const u8 als_report_descriptor[] = {
 0X81, 0x02,		/* HID Input (Data_Arr_Abs) */
 0xC0			/* HID end collection */
 };
-#endif

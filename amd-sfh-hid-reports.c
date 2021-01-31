@@ -10,9 +10,8 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 
-#include "amd-sfh.h"
-#include "amd-sfh-hid-descriptors.h"
 #include "amd-sfh-hid-reports.h"
+#include "amd-sfh-report-descriptors.h"
 
 #define FIRMWARE_MULTIPLIER						1000
 #define HID_USAGE_SENSOR_PROP_REPORTING_STATE_ALL_EVENTS_ENUM		0x41
@@ -27,101 +26,6 @@
 #define HID_USAGE_SENSOR_STATE_INITIALIZING_ENUM			0x05
 #define HID_USAGE_SENSOR_EVENT_DATA_UPDATED_ENUM			0x04
 
-/**
- * get_report_descriptor - Writes a report descriptor.
- * @sensor_idx:		The sensor index
- * @buf:		The report descriptor buffer
- *
- * Returns zero on success or nonzero on errors.
- */
-int get_report_descriptor(enum sensor_idx sensor_idx, u8 *buf)
-{
-	size_t size;
-
-	if (!buf)
-		return -ENOBUFS;
-
-	switch (sensor_idx) {
-	case ACCEL_IDX:
-		size = sizeof(accel3_report_descriptor);
-		memcpy(buf, accel3_report_descriptor, size);
-		break;
-	case GYRO_IDX:
-		size = sizeof(gyro3_report_descriptor);
-		memcpy(buf, gyro3_report_descriptor, size);
-		break;
-	case MAG_IDX:
-		size = sizeof(magno_report_descriptor);
-		memcpy(buf, magno_report_descriptor, size);
-		break;
-	case ALS_IDX:
-		size = sizeof(als_report_descriptor);
-		memcpy(buf, als_report_descriptor, size);
-		break;
-	default:
-		return -EINVAL;
-	}
-
-	return 0;
-}
-EXPORT_SYMBOL_GPL(get_report_descriptor);
-
-/**
- * get_descriptor_size - Returns the requested descriptor size.
- * @sensor_idx:		The sensor index
- * @descriptor_name:	The requested descriptor
- *
- * Returns the respective descriptor's size or < 0 on errors.
- */
-int get_descriptor_size(enum sensor_idx sensor_idx, enum desc_type desc_type)
-{
-	switch (sensor_idx) {
-	case ACCEL_IDX:
-		switch (desc_type) {
-		case AMD_SFH_DESCRIPTOR:
-			return sizeof(accel3_report_descriptor);
-		case AMD_SFH_INPUT_REPORT:
-			return sizeof(struct accel3_input_report);
-		case AMD_SFH_FEATURE_REPORT:
-			return sizeof(struct accel3_feature_report);
-		}
-		break;
-	case GYRO_IDX:
-		switch (desc_type) {
-		case AMD_SFH_DESCRIPTOR:
-			return sizeof(gyro3_report_descriptor);
-		case AMD_SFH_INPUT_REPORT:
-			return sizeof(struct gyro_input_report);
-		case AMD_SFH_FEATURE_REPORT:
-			return sizeof(struct gyro_feature_report);
-		}
-		break;
-	case MAG_IDX:
-		switch (desc_type) {
-		case AMD_SFH_DESCRIPTOR:
-			return sizeof(magno_report_descriptor);
-		case AMD_SFH_INPUT_REPORT:
-			return sizeof(struct magno_input_report);
-		case AMD_SFH_FEATURE_REPORT:
-			return sizeof(struct magno_feature_report);
-		}
-		break;
-	case ALS_IDX:
-		switch (desc_type) {
-		case AMD_SFH_DESCRIPTOR:
-			return sizeof(als_report_descriptor);
-		case AMD_SFH_INPUT_REPORT:
-			return sizeof(struct als_input_report);
-		case AMD_SFH_FEATURE_REPORT:
-			return sizeof(struct als_feature_report);
-		}
-		break;
-	}
-
-	return -EINVAL;
-}
-EXPORT_SYMBOL_GPL(get_descriptor_size);
-
 static void get_common_features(struct common_features *common, int report_id)
 {
 	common->report_id = report_id;
@@ -135,7 +39,7 @@ static void get_common_features(struct common_features *common, int report_id)
 	common->report_interval =  HID_DEFAULT_REPORT_INTERVAL;
 }
 
-static int get_accel_feature_report(int report_id, u8 *buf, size_t len)
+int get_accel_feature_report(int report_id, u8 *buf, size_t len)
 {
 	size_t size;
 	struct accel3_feature_report accel_features;
@@ -153,7 +57,7 @@ static int get_accel_feature_report(int report_id, u8 *buf, size_t len)
 	return size;
 }
 
-static int get_gyro_feature_report(int report_id, u8 *buf, size_t len)
+int get_gyro_feature_report(int report_id, u8 *buf, size_t len)
 {
 	size_t size;
 	struct gyro_feature_report gyro_features;
@@ -171,7 +75,7 @@ static int get_gyro_feature_report(int report_id, u8 *buf, size_t len)
 	return size;
 }
 
-static int get_mag_feature_report(int report_id, u8 *buf, size_t len)
+int get_mag_feature_report(int report_id, u8 *buf, size_t len)
 {
 	size_t size;
 	struct magno_feature_report magno_features;
@@ -191,7 +95,7 @@ static int get_mag_feature_report(int report_id, u8 *buf, size_t len)
 	return size;
 }
 
-static int get_als_feature_report(int report_id, u8 *buf, size_t len)
+int get_als_feature_report(int report_id, u8 *buf, size_t len)
 {
 	size_t size;
 	struct als_feature_report als_features;
@@ -209,35 +113,6 @@ static int get_als_feature_report(int report_id, u8 *buf, size_t len)
 	return size;
 }
 
-/**
- * get_feature_report - Writes a feature report and returns its size.
- * @sensor_idx:		The sensor index
- * @report_id:		The report id
- * @buf:		The feature report buffer
- *
- * Returns the size on success or < 0 on errors.
- */
-int get_feature_report(enum sensor_idx sensor_idx, int report_id, u8 *buf,
-		       size_t len)
-{
-	if (!buf)
-		return -ENOBUFS;
-
-	switch (sensor_idx) {
-	case ACCEL_IDX:
-		return get_accel_feature_report(report_id, buf, len);
-	case GYRO_IDX:
-		return get_gyro_feature_report(report_id, buf, len);
-	case MAG_IDX:
-		return get_mag_feature_report(report_id, buf, len);
-	case ALS_IDX:
-		return get_als_feature_report(report_id, buf, len);
-	default:
-		return -EINVAL;
-	}
-}
-EXPORT_SYMBOL_GPL(get_feature_report);
-
 static void get_common_inputs(struct common_inputs *common, int report_id)
 {
 	common->report_id = report_id;
@@ -245,8 +120,7 @@ static void get_common_inputs(struct common_inputs *common, int report_id)
 	common->event_type = HID_USAGE_SENSOR_EVENT_DATA_UPDATED_ENUM;
 }
 
-static int get_accel_input_report(int report_id, u8 *buf, size_t len,
-				  u32 *cpu_addr)
+int get_accel_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	size_t size;
 	struct accel3_input_report acc_input;
@@ -265,8 +139,7 @@ static int get_accel_input_report(int report_id, u8 *buf, size_t len,
 	return size;
 }
 
-static int get_gyro_input_report(int report_id, u8 *buf, size_t len,
-				 u32 *cpu_addr)
+int get_gyro_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	size_t size;
 	struct gyro_input_report gyro_input;
@@ -284,8 +157,7 @@ static int get_gyro_input_report(int report_id, u8 *buf, size_t len,
 	return size;
 }
 
-static int get_mag_input_report(int report_id, u8 *buf, size_t len,
-				u32 *cpu_addr)
+int get_mag_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	size_t size;
 	struct magno_input_report magno_input;
@@ -304,8 +176,7 @@ static int get_mag_input_report(int report_id, u8 *buf, size_t len,
 	return size;
 }
 
-static int get_als_input_report(int report_id, u8 *buf, size_t len,
-				u32 *cpu_addr)
+int get_als_input_report(int report_id, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	size_t size;
 	struct als_input_report als_input;
@@ -319,36 +190,4 @@ static int get_als_input_report(int report_id, u8 *buf, size_t len,
 
 	memcpy(buf, &als_input, size);
 	return size;
-}
-
-/**
- * get_feature_report - Writes an input report and returns its size.
- * @sensor_idx:		The sensor index
- * @report_id:		The report id
- * @buf:		The feature report buffer
- * @cpu_addr:		The DMA mapped CPU address
- *
- * Returns the size on success or < 0 on errors.
- */
-int get_input_report(enum sensor_idx sensor_idx, int report_id, u8 *buf,
-		     size_t len, u32 *cpu_addr)
-{
-	if (!buf)
-		return -ENOBUFS;
-
-	if (!cpu_addr)
-		return -EIO;
-
-	switch (sensor_idx) {
-	case ACCEL_IDX:
-		return get_accel_input_report(report_id, buf, len, cpu_addr);
-	case GYRO_IDX:
-		return get_gyro_input_report(report_id, buf, len, cpu_addr);
-	case MAG_IDX:
-		return get_mag_input_report(report_id, buf, len, cpu_addr);
-	case ALS_IDX:
-		return get_als_input_report(report_id, buf, len, cpu_addr);
-	default:
-		return -EINVAL;
-	}
 }
