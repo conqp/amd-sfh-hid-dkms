@@ -176,6 +176,7 @@ const unsigned char accel3_report_descriptor[] = {
 0X81, 0x02,		/* HID Input (Data_Arr_Abs) */
 0xC0			/* HID end collection */
 };
+const size_t accel3_report_descriptor_size = sizeof(accel3_report_descriptor);
 
 const unsigned char gyro3_report_descriptor[] = {
 0x05, 0x20,		/* Usage page */
@@ -337,6 +338,7 @@ const unsigned char gyro3_report_descriptor[] = {
 
 0xC0,			/* HID end collection */
 };
+const size_t gyro3_report_descriptor_size = sizeof(gyro3_report_descriptor);
 
 const unsigned char magno_report_descriptor[] = {
 0x05, 0x20,		/* Usage page */
@@ -509,6 +511,7 @@ const unsigned char magno_report_descriptor[] = {
 0X81, 0x02,			/* HID Input (Data_Arr_Abs) */
 0xC0				/* HID end collection */
 };
+const size_t magno_report_descriptor_size = sizeof(magno_report_descriptor);
 
 const unsigned char als_report_descriptor[] = {
 0x05, 0x20,	/* HID usage page sensor */
@@ -641,3 +644,4 @@ const unsigned char als_report_descriptor[] = {
 0X81, 0x02,		/* HID Input (Data_Arr_Abs) */
 0xC0			/* HID end collection */
 };
+const size_t als_report_descriptor_size = sizeof(als_report_descriptor);

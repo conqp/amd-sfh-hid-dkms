@@ -57,19 +57,19 @@ static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 
 	switch (hid_data->sensor_idx) {
 	case ACCEL_IDX:
-		size = strlen(accel3_report_descriptor);
+		size = accel3_report_descriptor_size;
 		buf = kstrndup(accel3_report_descriptor, size, GFP_KERNEL);
 		break;
 	case GYRO_IDX:
-		size = strlen(gyro3_report_descriptor);
+		size = gyro3_report_descriptor_size;
 		buf = kstrndup(gyro3_report_descriptor, size, GFP_KERNEL);
 		break;
 	case MAG_IDX:
-		size = strlen(magno_report_descriptor);
+		size = magno_report_descriptor_size;
 		buf = kstrndup(magno_report_descriptor, size, GFP_KERNEL);
 		break;
 	case ALS_IDX:
-		size = strlen(als_report_descriptor);
+		size = als_report_descriptor_size;
 		buf = kstrndup(als_report_descriptor, size, GFP_KERNEL);
 		break;
 	default:
