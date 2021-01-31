@@ -34,7 +34,8 @@ static void amd_sfh_hid_poll(struct work_struct *work)
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
 	hid_hw_raw_request(hid_data->hid, 1, hid_data->report_buf,
-			   hid_data->report_size, HID_INPUT_REPORT, 0);
+			   hid_data->report_size, HID_INPUT_REPORT,
+			   HID_REQ_GET_REPORT);
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }
 
