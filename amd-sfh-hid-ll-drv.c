@@ -49,6 +49,7 @@ static void amd_sfh_hid_poll(struct work_struct *work)
 static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data;
+	const u8 *descriptor;
 	size_t size;
 	u8 *buf;
 	int rc;
@@ -57,25 +58,30 @@ static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 
 	switch (hid_data->sensor_idx) {
 	case ACCEL_IDX:
+		descriptor = accel3_report_descriptor;
 		size = accel3_report_descriptor_size;
-		buf = kstrndup(accel3_report_descriptor, size, GFP_KERNEL);
 		break;
 	case GYRO_IDX:
+		descriptor = gyro3_report_descriptor;
 		size = gyro3_report_descriptor_size;
-		buf = kstrndup(gyro3_report_descriptor, size, GFP_KERNEL);
 		break;
 	case MAG_IDX:
+		descriptor = magno_report_descriptor;
 		size = magno_report_descriptor_size;
-		buf = kstrndup(magno_report_descriptor, size, GFP_KERNEL);
 		break;
 	case ALS_IDX:
+		descriptor = als_report_descriptor;
 		size = als_report_descriptor_size;
-		buf = kstrndup(als_report_descriptor, size, GFP_KERNEL);
 		break;
 	default:
 		return -EINVAL;
 	}
 
+	buf = kzalloc(size, GFP_KERNEL);
+	if (!buf)
+		return -ENOMEM
+
+	memcpy(buf, descriptor, size);
 	rc = hid_parse_report(hid, buf, size);
 	kfree(buf);
 	return rc;
