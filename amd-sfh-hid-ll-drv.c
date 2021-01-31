@@ -76,7 +76,6 @@ static int amd_sfh_hid_ll_parse(struct hid_device *hid)
 		return -EINVAL;
 	}
 
-	hid_err(hid, "Report size: %ld", size);
 	rc = hid_parse_report(hid, buf, size);
 	kfree(buf);
 	return rc;
