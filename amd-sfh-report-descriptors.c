@@ -6,7 +6,7 @@
  * 		Richard Neumann <mail@richard-neumann.de>
  */
 
-#include "amd-sfh-descriptors.h"
+#include "amd-sfh-report-descriptors.h"
 
 // Accelerometer 3D Sensor
 const unsigned char accel3_report_descriptor[] = {
