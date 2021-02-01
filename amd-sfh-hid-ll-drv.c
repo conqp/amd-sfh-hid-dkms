@@ -33,27 +33,16 @@
 static void poll(struct work_struct *work)
 {
 	struct amd_sfh_hid_data *hid_data;
-	//struct hid_report *report;
-	u8 *buf;
+	struct hid_report *report;
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
 	hid_err(hid_data->hid, "poll");
 
-	/*
 	report = hid_register_report(hid_data->hid, HID_INPUT_REPORT, 1, 0);
 	if (!report)
 		goto reschedule;
 
 	hid_hw_request(hid_data->hid, report, HID_REQ_GET_REPORT);
-	 */
-
-	buf = kzalloc(20, GFP_KERNEL);
-	if (!buf)
-		goto reschedule;
-
-	hid_hw_raw_request(hid_data->hid, 1, buf, 20, HID_INPUT_REPORT,
-			   HID_REQ_GET_REPORT);
-	kfree(buf);
 
 reschedule:
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
