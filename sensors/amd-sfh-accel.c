@@ -17,7 +17,7 @@ static struct feature_report {
 	u16 change_sesnitivity;
 	s16 sensitivity_max;
 	s16 sensitivity_min;
-};
+} feature_report;
 
 static struct input_report {
 	struct amd_sfh_common_inputs common;
@@ -25,7 +25,7 @@ static struct input_report {
 	int accel_y;
 	int accel_z;
 	u8 shake_detection;
-};
+} input_report;
 
 static u8 report_descriptor[] = {
 0x05, 0x20,		/* Usage page */
@@ -207,8 +207,7 @@ static u8 report_descriptor[] = {
  */
 int amd_sfh_get_accel_feature_report(int reportnum, u8 *buf, size_t len)
 {
-	struct feature_report feature_report;
-	size_t size = sizeof(struct feature_report);
+	size_t size = sizeof(feature_report);
 	if (size > len)
 		return -ENOMEM;
 
@@ -235,7 +234,6 @@ int amd_sfh_get_accel_feature_report(int reportnum, u8 *buf, size_t len)
 int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
 				   u32 *cpu_addr)
 {
-	struct input_report input_report;
 	size_t size = sizeof(struct input_report);
 	if (size > len)
 		return -ENOMEM;
@@ -248,6 +246,9 @@ int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
 	input_report.accel_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
 	input_report.shake_detection = (int)cpu_addr[3] / AMD_SFH_FW_MUL;
 	amd_sfh_set_common_inputs(&input_report.common, reportnum);
+	pr_err("Accel input report: %dx%dx%d, shake: %d", input_report.accel_x,
+	       input_report.accel_y, input_report.accel_z,
+	       input_report.shake_detection);
 
 	memcpy(buf, &input_report, size);
 	return 0;

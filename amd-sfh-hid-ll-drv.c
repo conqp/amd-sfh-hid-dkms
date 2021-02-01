@@ -168,9 +168,6 @@ static int raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
 		reportnum, len, rtype, reqtype);
 	switch (rtype) {
 	case HID_FEATURE_REPORT:
-		if (!buf)
-			return -ENOBUFS;
-
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
 			return amd_sfh_get_accel_feature_report\
@@ -188,12 +185,6 @@ static int raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
 			return -EINVAL;
 		}
 	case HID_INPUT_REPORT:
-		if (!buf)
-			return -ENOBUFS;
-
-		if (!hid_data->cpu_addr)
-			return -EIO;
-
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
 			return amd_sfh_get_accel_input_report\

@@ -17,14 +17,14 @@ static struct feature_report {
 	u16 change_sesnitivity;
 	s16 sensitivity_max;
 	s16 sensitivity_min;
-};
+} feature_report;
 
 static struct input_report {
 	struct amd_sfh_common_inputs common;
 	int angle_x;
 	int angle_y;
 	int angle_z;
-};
+} input_report;
 
 static u8 report_descriptor[] = {
 0x05, 0x20,		/* Usage page */
@@ -199,7 +199,6 @@ static u8 report_descriptor[] = {
  */
 int amd_sfh_get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
 {
-	struct feature_report feature_report;
 	size_t size = sizeof(feature_report);
 	if (size > len)
 		return -ENOMEM;
@@ -227,7 +226,6 @@ int amd_sfh_get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
 int amd_sfh_get_gyro_input_report(int reportnum, u8 *buf, size_t len,
 				  u32 *cpu_addr)
 {
-	struct input_report input_report;
 	size_t size = sizeof(input_report);
 	if (size > len)
 		return -ENOMEM;
