@@ -14,7 +14,6 @@
 #include "amd-sfh.h"
 #include "amd-sfh-client.h"
 #include "amd-sfh-hid-ll-drv.h"
-#include "amd-sfh-hid-reports.h"
 #include "amd-sfh-pci.h"
 
 #define AMD_SFH_HID_VENDOR	0x3fe
@@ -67,29 +66,6 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 	hid_data->sensor_idx = sensor_idx;
 	hid_data->cpu_addr = NULL;
 
-	switch (sensor_idx) {
-	case ACCEL_IDX:
-		hid_data->report_size = sizeof(struct accel3_input_report);
-		break;
-	case GYRO_IDX:
-		hid_data->report_size = sizeof(struct gyro_input_report);
-		break;
-	case MAG_IDX:
-		hid_data->report_size = sizeof(struct magno_input_report);
-		break;
-	case ALS_IDX:
-		hid_data->report_size = sizeof(struct als_input_report);
-		break;
-	default:
-		return ERR_PTR(-EINVAL);
-	}
-
-	hid_data->report_buf = devm_kzalloc(&pci_dev->dev,
-					    hid_data->report_size,
-					    GFP_KERNEL);
-	if (!hid_data->report_buf)
-		return ERR_PTR(-ENOMEM);
-
 	return hid_data;
 }
 
@@ -140,11 +116,12 @@ static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
 	rc = hid_add_device(hid);
 	if (rc)	{
 		hid_err(hid, "Failed to add HID device: %d\n", rc);
-		goto destroy_hid_device;
+		goto free_hid_data;
 	}
 
 	return hid;
-
+free_hid_data:
+	devm_kfree(&pci_dev->dev, hid->driver_data);
 destroy_hid_device:
 	hid_destroy_device(hid);
 err_hid_alloc:
@@ -179,7 +156,7 @@ void amd_sfh_client_init(struct amd_sfh_data *privdata)
 	else
 		privdata->sensors[i++] = NULL;
 
-	if (sensor_mask & MAGNO_MASK)
+	if (sensor_mask & MAG_MASK)
 		privdata->sensors[i++] = get_hid_device(pci_dev, MAG_IDX);
 	else
 		privdata->sensors[i++] = NULL;

@@ -22,6 +22,7 @@
 
 #define DRIVER_NAME		"amd_sfh"
 #define PCI_DEVICE_ID_AMD_SFH	0x15E4
+#define UPDATE_INTERVAL		200
 
 /* Module parameters */
 static uint sensor_mask_override;
@@ -75,7 +76,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 
 	cmd.ul = 0;
 	cmd.s.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
-	cmd.s.interval = AMD_SFH_UPDATE_INTERVAL;
+	cmd.s.interval = UPDATE_INTERVAL;
 	cmd.s.sensor_id = sensor_idx;
 
 	parm.ul = 0;

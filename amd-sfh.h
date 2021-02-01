@@ -14,7 +14,6 @@
 #include <linux/pci.h>
 
 #define AMD_SFH_MAX_SENSORS	4
-#define AMD_SFH_UPDATE_INTERVAL	200
 
 /**
  * The sensor indices on the AMD SFH device
@@ -34,13 +33,13 @@ enum sensor_idx {
  * Bit masks for sensors matching.
  * @ACCEL_MASK:	Bit mask of the accelerometer
  * @GYRO_MASK:	Bit mask of the gyroscope
- * @MAGNO_MASK:	Bit mask of the magnetometer
+ * @MAG_MASK:	Bit mask of the magnetometer
  * @ALS_MASK:	Bit mask of the ambient light sensor
  */
 enum sensor_mask {
 	ACCEL_MASK = BIT(ACCEL_IDX),
 	GYRO_MASK = BIT(GYRO_IDX),
-	MAGNO_MASK = BIT(MAG_IDX),
+	MAG_MASK = BIT(MAG_IDX),
 	ALS_MASK = BIT(ALS_IDX),
 };
 

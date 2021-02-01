@@ -25,10 +25,6 @@
  * @sensor_idx:		The sensor index
  * @cpu_addr:		The DMA mapped CPU address
  * @dma_handle:		The DMA handle
- * @descriptor_size:	Size of the descriptor buffer
- * @descriptor_buf:	Buffer for the report descriptor
- * @report_size:	Size of the input report buffer
- * @report_buf:		Buffer for the input report
  */
 struct amd_sfh_hid_data {
 	struct delayed_work work;
@@ -37,8 +33,6 @@ struct amd_sfh_hid_data {
 	enum sensor_idx sensor_idx;
 	u32 *cpu_addr;
 	dma_addr_t dma_handle;
-	size_t report_size;
-	u8 *report_buf;
 };
 
 /* The low-level driver for AMD SFH HID devices */
