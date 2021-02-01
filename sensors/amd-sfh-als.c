@@ -192,6 +192,9 @@ int get_als_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	struct input_report report;
 
+	if (!cpu_addr)
+		return -EIO;
+
 	report.illuminance = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
 	set_common_inputs(&report.common, reportnum);
 

@@ -233,6 +233,9 @@ int get_accel_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	struct input_report report;
 
+	if (!cpu_addr)
+		return -EIO;
+
 	report.accel_x = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
 	report.accel_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;
 	report.accel_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
