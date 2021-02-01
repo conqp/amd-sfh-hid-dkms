@@ -208,6 +208,7 @@ static u8 report_descriptor[] = {
 int get_accel_feature_report(int reportnum, u8 *buf, size_t len)
 {
 	struct feature_report report;
+
 	report.change_sesnitivity = AMD_SFH_DEFAULT_SENSITIVITY;
 	report.sensitivity_min = AMD_SFH_DEFAULT_MIN_VALUE;
 	report.sensitivity_max = AMD_SFH_DEFAULT_MAX_VALUE;
@@ -231,9 +232,6 @@ int get_accel_feature_report(int reportnum, u8 *buf, size_t len)
 int get_accel_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	struct input_report report;
-
-	if (!cpu_addr)
-		return -EIO;
 
 	report.accel_x = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
 	report.accel_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;

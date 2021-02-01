@@ -19,7 +19,7 @@
 /**
  * Sensor Fusion Hub communication registers
  */
-enum {
+enum amd_sfh_pci_registers {
 	/* SFH C2P Message Registers */
 	AMD_C2P_MSG0 = 0x10500,		/* SFH command register */
 	AMD_C2P_MSG1 = 0x10504,		/* SFH parameter register */
@@ -44,7 +44,7 @@ enum {
 /**
  * SFH command IDs
  */
-enum {
+enum amd_sfh_cmd_ids {
 	AMD_SFH_CMD_NOOP = 0,
 	AMD_SFH_CMD_ENABLE_SENSOR,
 	AMD_SFH_CMD_DISABLE_SENSOR,
