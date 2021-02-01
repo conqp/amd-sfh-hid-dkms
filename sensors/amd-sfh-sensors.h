@@ -43,7 +43,7 @@ struct amd_sfh_common_features {
 	u8 power_state;
 	u8 sensor_state;
 	u32 report_interval;
-};
+} __packed;
 
 /**
  * struct amd_sfh_common_inputs - Input data common to all sensors
@@ -55,7 +55,7 @@ struct amd_sfh_common_inputs {
 	u8 report_id;
 	u8 sensor_state;
 	u8 event_type;
-};
+} __packed;
 
 enum amd_sfh_sensor_state {
 	AMD_SFH_SENSOR_READY = 0x02,

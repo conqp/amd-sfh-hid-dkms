@@ -12,17 +12,17 @@
 #include "amd-sfh-als.h"
 #include "amd-sfh-sensors.h"
 
-static struct feature_report {
+struct feature_report {
 	struct amd_sfh_common_features common;
 	u16 change_sesnitivity;
 	s16 sensitivity_max;
 	s16 sensitivity_min;
-} feature_report;
+} __packed;
 
-static struct input_report {
+struct input_report {
 	struct amd_sfh_common_inputs common;
 	int illuminance;
-} input_report;
+} __packed;
 
 static u8 report_descriptor[] = {
 0x05, 0x20,	/* HID usage page sensor */
@@ -158,30 +158,26 @@ static u8 report_descriptor[] = {
 
 int amd_sfh_get_als_feature_report(int reportnum, u8 *buf, size_t len)
 {
-	size_t size = sizeof(feature_report);
-	if (size > len)
-		return -ENOMEM;
+	struct feature_report report;
 
-	feature_report.change_sesnitivity = AMD_SFH_DEFAULT_SENSITIVITY;
-	feature_report.sensitivity_min = AMD_SFH_DEFAULT_MIN_VALUE;
-	feature_report.sensitivity_max = AMD_SFH_DEFAULT_MAX_VALUE;
-	amd_sfh_set_common_features(&feature_report.common, reportnum);
+	report.change_sesnitivity = AMD_SFH_DEFAULT_SENSITIVITY;
+	report.sensitivity_min = AMD_SFH_DEFAULT_MIN_VALUE;
+	report.sensitivity_max = AMD_SFH_DEFAULT_MAX_VALUE;
+	amd_sfh_set_common_features(&report.common, reportnum);
 
-	memcpy(buf, &feature_report, size);
+	memcpy(buf, &report, len);
 	return 0;
 }
 
 int amd_sfh_get_als_input_report(int reportnum, u8 *buf, size_t len,
 				 u32 *cpu_addr)
 {
-	size_t size = sizeof(struct input_report);
-	if (size > len)
-		return -ENOMEM;
+	struct input_report report;
 
-	input_report.illuminance = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
-	amd_sfh_set_common_inputs(&input_report.common, reportnum);
+	report.illuminance = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
+	amd_sfh_set_common_inputs(&report.common, reportnum);
 
-	memcpy(buf, &input_report, size);
+	memcpy(buf, &report, len);
 	return 0;
 }
 

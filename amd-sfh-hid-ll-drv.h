@@ -21,10 +21,10 @@
  * struct amd_sfh_hid_data - Per HID device driver data.
  * @work:		Work buffer for device polling
  * @hid:		Backref to the hid device
- * @pci_dev:		The uderlying PCI device
- * @sensor_idx:		The sensor index
- * @cpu_addr:		The DMA mapped CPU address
- * @dma_handle:		The DMA handle
+ * @pci_dev:		Underlying PCI device
+ * @sensor_idx:		Sensor index
+ * @cpu_addr:		DMA mapped CPU address
+ * @dma_handle:		DMA handle
  */
 struct amd_sfh_hid_data {
 	struct delayed_work work;

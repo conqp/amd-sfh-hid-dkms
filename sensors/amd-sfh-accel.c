@@ -12,20 +12,20 @@
 #include "amd-sfh-accel.h"
 #include "amd-sfh-sensors.h"
 
-static struct feature_report {
+struct feature_report {
 	struct amd_sfh_common_features common;
 	u16 change_sesnitivity;
 	s16 sensitivity_max;
 	s16 sensitivity_min;
-} feature_report;
+} __packed;
 
-static struct input_report {
+struct input_report {
 	struct amd_sfh_common_inputs common;
 	int accel_x;
 	int accel_y;
 	int accel_z;
 	u8 shake_detection;
-} input_report;
+} __packed;
 
 static u8 report_descriptor[] = {
 0x05, 0x20,		/* Usage page */
@@ -207,16 +207,13 @@ static u8 report_descriptor[] = {
  */
 int amd_sfh_get_accel_feature_report(int reportnum, u8 *buf, size_t len)
 {
-	size_t size = sizeof(feature_report);
-	if (size > len)
-		return -ENOMEM;
+	struct feature_report report;
+	report.change_sesnitivity = AMD_SFH_DEFAULT_SENSITIVITY;
+	report.sensitivity_min = AMD_SFH_DEFAULT_MIN_VALUE;
+	report.sensitivity_max = AMD_SFH_DEFAULT_MAX_VALUE;
+	amd_sfh_set_common_features(&report.common, reportnum);
 
-	feature_report.change_sesnitivity = AMD_SFH_DEFAULT_SENSITIVITY;
-	feature_report.sensitivity_min = AMD_SFH_DEFAULT_MIN_VALUE;
-	feature_report.sensitivity_max = AMD_SFH_DEFAULT_MAX_VALUE;
-	amd_sfh_set_common_features(&feature_report.common, reportnum);
-
-	memcpy(buf, &feature_report, size);
+	memcpy(buf, &report, len);
 	return 0;
 }
 
@@ -234,28 +231,21 @@ int amd_sfh_get_accel_feature_report(int reportnum, u8 *buf, size_t len)
 int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
 				   u32 *cpu_addr)
 {
-	size_t size = sizeof(struct input_report);
-	pr_err("size check: %lu > %lu", size, len);
-	/*
-	if (size > len)
-		return -ENOMEM;
-	 */
+	struct input_report report;
 
-	pr_err("cpu_addr check");
 	if (!cpu_addr)
 		return -EIO;
 
 	pr_err("setting data");
-	input_report.accel_x = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
-	input_report.accel_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;
-	input_report.accel_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
-	input_report.shake_detection = (int)cpu_addr[3] / AMD_SFH_FW_MUL;
-	amd_sfh_set_common_inputs(&input_report.common, reportnum);
-	pr_err("Accel input report: %dx%dx%d, shake: %d", input_report.accel_x,
-	       input_report.accel_y, input_report.accel_z,
-	       input_report.shake_detection);
+	report.accel_x = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
+	report.accel_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;
+	report.accel_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
+	report.shake_detection = (int)cpu_addr[3] / AMD_SFH_FW_MUL;
+	amd_sfh_set_common_inputs(&report.common, reportnum);
+	pr_err("Accel input report: %dx%dx%d, shake: %d", report.accel_x,
+	       report.accel_y, report.accel_z, report.shake_detection);
 
-	memcpy(buf, &input_report, size);
+	memcpy(buf, &report, len);
 	return 0;
 }
 
