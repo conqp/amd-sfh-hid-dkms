@@ -33,16 +33,24 @@
 static void poll(struct work_struct *work)
 {
 	struct amd_sfh_hid_data *hid_data;
-	struct hid_report *report;
+	//struct hid_report *report;
+	u8 *buf;
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
-	hid_err(hid_data->hid, "poll");
 
-	report = hid_register_report(hid_data->hid, HID_INPUT_REPORT, 1, 0);
+	/*
+	report = hid_register_report(hid_data->hid, HID_INPUT_REPORT, 1, 1);
 	if (!report)
 		goto reschedule;
 
 	hid_hw_request(hid_data->hid, report, HID_REQ_GET_REPORT);
+	 */
+
+	buf = kzalloc(16, GFP_KERNEL);
+	if (!buf)
+		goto reschedule;
+
+	hid_input_report(hid_data->hid, HID_REQ_GET_REPORT, buf, 16, 0);
 
 reschedule:
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
@@ -60,7 +68,6 @@ static int parse(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "parse");
 	switch (hid_data->sensor_idx) {
 	case ACCEL_IDX:
 		return amd_sfh_parse_accel(hid);
@@ -107,7 +114,6 @@ static void stop(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "stop");
 	dma_free_coherent(&hid_data->pci_dev->dev, AMD_SFH_HID_DMA_SIZE,
 			  hid_data->cpu_addr, hid_data->dma_handle);
 	hid_data->cpu_addr = NULL;
@@ -125,7 +131,6 @@ static int open(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "open");
 	amd_sfh_start_sensor(hid_data->pci_dev, hid_data->sensor_idx,
 			     hid_data->dma_handle);
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
@@ -142,7 +147,6 @@ static void close(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "close");
 	cancel_delayed_work_sync(&hid_data->work);
 	amd_sfh_stop_sensor(hid_data->pci_dev, hid_data->sensor_idx);
 }
@@ -164,48 +168,39 @@ static int raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
-	hid_err(hid, "raw_request: num: %u, len: %lu, rtype: %u, reqtype: %d",
-		reportnum, len, rtype, reqtype);
+	if (reqtype != HID_REQ_GET_REPORT)
+		return -EINVAL;
+
 	switch (rtype) {
 	case HID_FEATURE_REPORT:
-		hid_err(hid, "feature report");
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
-			hid_err(hid, "accel");
 			return amd_sfh_get_accel_feature_report\
 				(reportnum, buf, len);
 		case ALS_IDX:
-			hid_err(hid, "als");
 			return amd_sfh_get_als_feature_report\
 				(reportnum, buf, len);
 		case GYRO_IDX:
-			hid_err(hid, "gyro");
 			return amd_sfh_get_gyro_feature_report\
 				(reportnum, buf, len);
 		case MAG_IDX:
-			hid_err(hid, "mag");
 			return amd_sfh_get_mag_feature_report\
 				(reportnum, buf, len);
 		default:
 			return -EINVAL;
 		}
 	case HID_INPUT_REPORT:
-		hid_err(hid, "input report");
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
-			hid_err(hid, "accel");
 			return amd_sfh_get_accel_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		case ALS_IDX:
-			hid_err(hid, "als");
 			return amd_sfh_get_als_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		case GYRO_IDX:
-			hid_err(hid, "gyro");
 			return amd_sfh_get_gyro_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		case MAG_IDX:
-			hid_err(hid, "mag");
 			return amd_sfh_get_mag_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		default:

@@ -233,20 +233,14 @@ int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
 {
 	struct input_report report;
 
-	pr_err("input report size: %lu, buf: %lu", sizeof(struct input_report),
-	       len);
-
 	if (!cpu_addr)
 		return -EIO;
 
-	pr_err("setting data");
 	report.accel_x = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
 	report.accel_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;
 	report.accel_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
 	report.shake_detection = (int)cpu_addr[3] / AMD_SFH_FW_MUL;
 	amd_sfh_set_common_inputs(&report.common, reportnum);
-	pr_err("Accel input report: %dx%dx%d, shake: %d", report.accel_x,
-	       report.accel_y, report.accel_z, report.shake_detection);
 
 	memcpy(buf, &report, len);
 	return 0;
@@ -262,7 +256,6 @@ int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
  */
 int amd_sfh_parse_accel(struct hid_device *hid)
 {
-	pr_err("parse: %lu", sizeof(report_descriptor));
 	return hid_parse_report(hid, report_descriptor,
 				sizeof(report_descriptor));
 }
