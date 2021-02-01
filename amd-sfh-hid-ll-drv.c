@@ -94,7 +94,7 @@ static int start(struct hid_device *hid)
 	if (!hid_data->cpu_addr)
 		return -EIO;
 
-	INIT_DELAYED_WORK(&hid_data->work, amd_sfh_hid_poll);
+	INIT_DELAYED_WORK(&hid_data->work, poll);
 	return 0;
 }
 
