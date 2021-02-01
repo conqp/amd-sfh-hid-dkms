@@ -188,14 +188,14 @@ static u8 report_descriptor[] = {
 };
 
 /**
- * amd_sfh_get_gyro_feature_report - Writes a gyroscope feature report.
+ * amd_sfh_get_gyro_feature_report - Get gyroscope feature report.
  * @reportnum:		Report number
  * @buf:		Report buffer
  * @len:		Size of the report buffer
  *
  * Writes a feature report for the gyroscope to the report buffer.
  *
- * Returns 0 on success or non-zero on errors.
+ * Returns the amout of bytes written on success or < zero on errors.
  */
 int amd_sfh_get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
 {
@@ -207,11 +207,11 @@ int amd_sfh_get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
 	amd_sfh_set_common_features(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
-	return 0;
+	return len;
 }
 
 /**
- * amd_sfh_get_gyro_input_report - Writes a gyroscope input report.
+ * amd_sfh_get_gyro_input_report - Get gyroscope input report.
  * @reportnum:		Report number
  * @buf:		Report buffer
  * @len:		Size of the report buffer
@@ -219,7 +219,7 @@ int amd_sfh_get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
  *
  * Writes a input report for the gyroscope to the report buffer.
  *
- * Returns 0 on success or non-zero on errors.
+ * Returns the amout of bytes written on success or < zero on errors.
  */
 int amd_sfh_get_gyro_input_report(int reportnum, u8 *buf, size_t len,
 				  u32 *cpu_addr)
@@ -232,7 +232,7 @@ int amd_sfh_get_gyro_input_report(int reportnum, u8 *buf, size_t len,
 	amd_sfh_set_common_inputs(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
-	return 0;
+	return len;
 }
 
 /**

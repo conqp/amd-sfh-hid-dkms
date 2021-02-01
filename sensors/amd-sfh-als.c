@@ -155,7 +155,16 @@ static u8 report_descriptor[] = {
 0X81, 0x02,		/* HID Input (Data_Arr_Abs) */
 0xC0			/* HID end collection */
 };
-
+/**
+ * amd_sfh_get_als_feature_report - Get ambient light sensor feature report.
+ * @reportnum:		Report number
+ * @buf:		Report buffer
+ * @size:		Size of the report buffer
+ *
+ * Writes a feature report for the accelerometer to the report buffer.
+ *
+ * Returns the amout of bytes written on success or < zero on errors.
+ */
 int amd_sfh_get_als_feature_report(int reportnum, u8 *buf, size_t len)
 {
 	struct feature_report report;
@@ -166,9 +175,19 @@ int amd_sfh_get_als_feature_report(int reportnum, u8 *buf, size_t len)
 	amd_sfh_set_common_features(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
-	return 0;
+	return len;
 }
-
+/**
+ * amd_sfh_get_als_input_report - Get ambient light sensor input report.
+ * @reportnum:		Report number
+ * @buf:		Report buffer
+ * @len:		Size of the report buffer
+ * @cpu_addr:		DMA-mapped CPU address
+ *
+ * Writes an input report for the accelerometer to the report buffer.
+ *
+ * Returns the amout of bytes written on success or < zero on errors.
+ */
 int amd_sfh_get_als_input_report(int reportnum, u8 *buf, size_t len,
 				 u32 *cpu_addr)
 {
@@ -178,7 +197,7 @@ int amd_sfh_get_als_input_report(int reportnum, u8 *buf, size_t len,
 	amd_sfh_set_common_inputs(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
-	return 0;
+	return len;
 }
 
 /**
