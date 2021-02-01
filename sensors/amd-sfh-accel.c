@@ -233,6 +233,9 @@ int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
 {
 	struct input_report report;
 
+	pr_err("input report size: %lu, buf: %lu", sizeof(struct input_report),
+	       len);
+
 	if (!cpu_addr)
 		return -EIO;
 
