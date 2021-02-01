@@ -25,10 +25,10 @@
 
 /**
  * poll - Updates the input report for a HID device.
- * @work:	The delayed work
+ * @work:	Delayed work
  *
  * Polls input reports from the respective HID devices and submits
- * them by invoking hid_input_report() from hid-core.
+ * them by invoking hid_hw_request() from hid.h.
  */
 static void poll(struct work_struct *work)
 {
@@ -51,7 +51,7 @@ reschedule:
 
 /**
  * parse - Callback to parse HID descriptor.
- * @hid:	The HID device
+ * @hid:	HID device
  *
  * This function gets called during call to hid_add_device
  *
@@ -77,7 +77,7 @@ static int parse(struct hid_device *hid)
 
 /**
  * start - Starts the HID device.
- * @hid:	The HID device
+ * @hid:	HID device
  *
  * Allocates DMA memory on the PCI device.
  * Returns 0 on success and non-zero on error.
@@ -99,7 +99,7 @@ static int start(struct hid_device *hid)
 
 /**
  * stop - Stops the HID device.
- * @hid:	The HID device
+ * @hid:	HID device
  *
  * Frees the DMA memory on the PCI device.
  */
@@ -114,7 +114,7 @@ static void stop(struct hid_device *hid)
 
 /**
  * open - Opens the HID device.
- * @hid:	The HID device
+ * @hid:	HID device
  *
  * Starts the corresponding sensor via the PCI driver
  * and schedules report polling.
@@ -132,7 +132,7 @@ static int open(struct hid_device *hid)
 
 /**
  * close - Closes the HID device.
- * @hid:	The HID device
+ * @hid:	HID device
  *
  * Stops report polling and the corresponding sensor via the PCI driver.
  */
@@ -146,12 +146,12 @@ static void close(struct hid_device *hid)
 
 /**
  * raw_request - Handles HID requests.
- * @hid:	The HID device
- * @reportnum:	The HID report ID
- * @buf:	The write buffer for HID data
- * @len:	The size of the write buffer
- * @rtype:	The report type
- * @reqtype:	The request type
+ * @hid:	HID device
+ * @reportnum:	HID report ID
+ * @buf:	Write buffer for HID data
+ * @len:	Size of the write buffer
+ * @rtype:	Report type
+ * @reqtype:	Request type
  *
  * Delegates to the reporting functions
  * defined in amd-sfh-hid-descriptor.h.

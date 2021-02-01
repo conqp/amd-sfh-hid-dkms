@@ -10,7 +10,7 @@
 /**
  * set_common_features - Sets common values on feature reports.
  * @common:	Pointer to the common features struct
- * @reportnum:	The report number
+ * @reportnum:	Report number
  */
 void set_common_features(struct common_features *common, int report_id)
 {
@@ -25,7 +25,7 @@ void set_common_features(struct common_features *common, int report_id)
 /**
  * set_common_inputs - Sets common values on input reports.
  * @common:	Pointer to the common inputs struct
- * @reportnum:	The report number
+ * @reportnum:	Report number
  */
 void set_common_inputs(struct common_inputs *common, int report_id)
 {

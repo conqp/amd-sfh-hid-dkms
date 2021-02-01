@@ -45,9 +45,9 @@ static char *get_sensor_name(enum sensor_idx sensor_idx)
 
 /**
  * get_hid_data - Allocate and initialize HID device driver data.
- * @hid:	The HID device
- * @pci_dev:	The SFH PCI device
- * @sensor_idx:	The sensor index
+ * @hid:		HID device
+ * @pci_dev:		SFH PCI device
+ * @sensor_idx:		Sensor index
  *
  * Returns a pointer to the HID driver data on success or an ERR_PTR on error.
  */
@@ -71,8 +71,8 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 
 /**
  * get_hid_device - Creates a HID device for a sensor on th SFH.
- * @pci_dev:		The underlying PCI device
- * @sensor_idx:		The sensor index
+ * @pci_dev:		Underlying PCI device
+ * @sensor_idx:		Sensor index
  *
  * Sets up the HID device and the corresponding HID driver data.
  * Returns a pointer to the new HID device or NULL on errors.
@@ -131,7 +131,7 @@ err_hid_alloc:
 
 /**
  * amd_sfh_client_init - Initializes the HID devices.
- * @privdata:	The driver data
+ * @privdata:	Driver data
  *
  * Matches the sensor bitmasks against the sensor bitmask retrieved
  * from amd_sfh_get_sensor_mask().
@@ -170,7 +170,7 @@ void amd_sfh_client_init(struct amd_sfh_data *privdata)
 
 /**
  * amd_sfh_client_deinit - Removes all active HID devices.
- * @privdata:	The driver data
+ * @privdata:	Driver data
  *
  * Destroys all initialized HID devices.
  */

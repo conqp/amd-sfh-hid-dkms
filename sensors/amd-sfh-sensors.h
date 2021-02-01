@@ -29,12 +29,12 @@
 
 /**
  * struct common_features - Features common to all sensors.
- * @report_id:		The report number
- * @connection_type:	The connection type
- * @report_state:	The state of the report
- * @power_state:	The power state of the deivce
- * @sensor_state:	The state of the sensor
- * @report_interval	The interval between reports
+ * @report_id:		Report number
+ * @connection_type:	Connection type
+ * @report_state:	State of the report
+ * @power_state:	Power state of the deivce
+ * @sensor_state:	State of the sensor
+ * @report_interval	Interval between reports
  */
 struct common_features {
 	u8 report_id;
@@ -47,9 +47,9 @@ struct common_features {
 
 /**
  * struct common_inputs - Input data common to all sensors
- * @report_id:		The report number
- * @sensor_state:	The state of the sensor
- * @event_type:		The type of event
+ * @report_id:		Report number
+ * @sensor_state:	State of the sensor
+ * @event_type:		Type of event
  */
 struct common_inputs {
 	u8 report_id;
