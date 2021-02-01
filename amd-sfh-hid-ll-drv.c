@@ -168,34 +168,44 @@ static int raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
 		reportnum, len, rtype, reqtype);
 	switch (rtype) {
 	case HID_FEATURE_REPORT:
+		hid_err(hid, "feature report");
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
+			hid_err(hid, "accel");
 			return amd_sfh_get_accel_feature_report\
 				(reportnum, buf, len);
 		case ALS_IDX:
+			hid_err(hid, "als");
 			return amd_sfh_get_als_feature_report\
 				(reportnum, buf, len);
 		case GYRO_IDX:
+			hid_err(hid, "gyro");
 			return amd_sfh_get_gyro_feature_report\
 				(reportnum, buf, len);
 		case MAG_IDX:
+			hid_err(hid, "mag");
 			return amd_sfh_get_mag_feature_report\
 				(reportnum, buf, len);
 		default:
 			return -EINVAL;
 		}
 	case HID_INPUT_REPORT:
+		hid_err(hid, "input report");
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
+			hid_err(hid, "accel");
 			return amd_sfh_get_accel_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		case ALS_IDX:
+			hid_err(hid, "als");
 			return amd_sfh_get_als_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		case GYRO_IDX:
+			hid_err(hid, "gyro");
 			return amd_sfh_get_gyro_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		case MAG_IDX:
+			hid_err(hid, "mag");
 			return amd_sfh_get_mag_input_report\
 				(reportnum, buf, len, hid_data->cpu_addr);
 		default:

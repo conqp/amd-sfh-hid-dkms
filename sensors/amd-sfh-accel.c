@@ -235,12 +235,15 @@ int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
 				   u32 *cpu_addr)
 {
 	size_t size = sizeof(struct input_report);
+	pr_err("size check");
 	if (size > len)
 		return -ENOMEM;
 
+	pr_err("cpu_addr check");
 	if (!cpu_addr)
 		return -EIO;
 
+	pr_err("setting data");
 	input_report.accel_x = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
 	input_report.accel_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;
 	input_report.accel_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
