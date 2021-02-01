@@ -269,6 +269,7 @@ int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
  */
 int amd_sfh_parse_accel(struct hid_device *hid)
 {
+	pr_err("parse: %lu", sizeof(report_descriptor));
 	return hid_parse_report(hid, report_descriptor,
 				sizeof(report_descriptor));
 }
