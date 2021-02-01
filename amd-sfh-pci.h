@@ -14,6 +14,8 @@
 
 #include "amd-sfh.h"
 
+#define AMD_SFH_UPDATE_INTERVAL		200
+
 /**
  * Sensor Fusion Hub communication registers
  */

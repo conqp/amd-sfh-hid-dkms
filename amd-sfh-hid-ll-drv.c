@@ -24,6 +24,32 @@
 #define AMD_SFH_HID_DMA_SIZE	(sizeof(int) * 8)
 
 /**
+ * poll - Updates the input report for a HID device.
+ * @work:	The delayed work
+ *
+ * Polls input reports from the respective HID devices and submits
+ * them by invoking hid_input_report() from hid-core.
+ */
+static void poll(struct work_struct *work)
+{
+	struct amd_sfh_hid_data *hid_data;
+	struct hid_report *input_report;
+
+	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
+	hid_err(hid_data->hid, "poll");
+
+	input_report = hid_register_report(hid_data->hid, HID_INPUT_REPORT, 1,
+					   0);
+	if (!hid_report)
+		goto reschedule;
+
+	hid_hw_request(hid_data->hid, input_report, HID_REQ_GET_REPORT);
+
+reschedule:
+	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
+}
+
+/**
  * parse - Callback to parse HID descriptor.
  * @hid:	The HID device
  *
@@ -68,7 +94,7 @@ static int start(struct hid_device *hid)
 	if (!hid_data->cpu_addr)
 		return -EIO;
 
-	//INIT_DELAYED_WORK(&hid_data->work, amd_sfh_hid_poll);
+	INIT_DELAYED_WORK(&hid_data->work, amd_sfh_hid_poll);
 	return 0;
 }
 
@@ -103,7 +129,7 @@ static int open(struct hid_device *hid)
 	hid_err(hid, "open");
 	amd_sfh_start_sensor(hid_data->pci_dev, hid_data->sensor_idx,
 			     hid_data->dma_handle);
-	//schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
+	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 	return 0;
 }
 
@@ -118,7 +144,7 @@ static void close(struct hid_device *hid)
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
 	hid_err(hid, "close");
-	//cancel_delayed_work_sync(&hid_data->work);
+	cancel_delayed_work_sync(&hid_data->work);
 	amd_sfh_stop_sensor(hid_data->pci_dev, hid_data->sensor_idx);
 }
 
