@@ -117,11 +117,13 @@ static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
 	rc = hid_add_device(hid);
 	if (rc)	{
 		hid_err(hid, "Failed to add HID device: %d\n", rc);
-		goto destroy_hid_device;
+		goto free_hid_data;
 	}
 
 	return hid;
 
+free_hid_data:
+	devm_kfree(pci_dev->dev, hid->driver_data);
 destroy_hid_device:
 	hid_destroy_device(hid);
 err_hid_alloc:
