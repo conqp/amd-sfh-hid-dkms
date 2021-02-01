@@ -28,7 +28,7 @@
 #define AMD_SFH_DEFAULT_SENSITIVITY	0x7F
 
 /**
- * struct amd_sfh_common_features - Features common to all sensors.
+ * struct common_features - Features common to all sensors.
  * @report_id:		The report number
  * @connection_type:	The connection type
  * @report_state:	The state of the report
@@ -36,7 +36,7 @@
  * @sensor_state:	The state of the sensor
  * @report_interval	The interval between reports
  */
-struct amd_sfh_common_features {
+struct common_features {
 	u8 report_id;
 	u8 connection_type;
 	u8 report_state;
@@ -46,12 +46,12 @@ struct amd_sfh_common_features {
 } __packed;
 
 /**
- * struct amd_sfh_common_inputs - Input data common to all sensors
+ * struct common_inputs - Input data common to all sensors
  * @report_id:		The report number
  * @sensor_state:	The state of the sensor
  * @event_type:		The type of event
  */
-struct amd_sfh_common_inputs {
+struct common_inputs {
 	u8 report_id;
 	u8 sensor_state;
 	u8 event_type;
@@ -62,8 +62,6 @@ enum amd_sfh_sensor_state {
 	AMD_SFH_SENSOR_INITIALIZING = 0x05,
 };
 
-void amd_sfh_set_common_features(struct amd_sfh_common_features *common,
-				 int report_id);
-void amd_sfh_set_common_inputs(struct amd_sfh_common_inputs *common,
-			       int report_id);
+void set_common_features(struct common_features *common, int report_id);
+void set_common_inputs(struct common_inputs *common, int report_id);
 #endif

@@ -13,7 +13,7 @@
 #include "amd-sfh-sensors.h"
 
 struct feature_report {
-	struct amd_sfh_common_features common;
+	struct common_features common;
 	u16 headingchange_sensitivity;
 	s16 heading_min;
 	s16 heading_max;
@@ -23,7 +23,7 @@ struct feature_report {
 } __packed;
 
 struct input_report {
-	struct amd_sfh_common_inputs common;
+	struct common_inputs common;
 	int flux_x;
 	int flux_y;
 	int flux_z;
@@ -203,7 +203,7 @@ static u8 report_descriptor[] = {
 };
 
 /**
- * amd_sfh_get_mag_feature_report - Get magnetometer feature report.
+ * get_mag_feature_report - Get magnetometer feature report.
  * @reportnum:		Report number
  * @buf:		Report buffer
  * @len:		Size of the report buffer
@@ -212,7 +212,7 @@ static u8 report_descriptor[] = {
  *
  * Returns the amout of bytes written on success or < zero on errors.
  */
-int amd_sfh_get_mag_feature_report(int reportnum, u8 *buf, size_t len)
+int get_mag_feature_report(int reportnum, u8 *buf, size_t len)
 {
 	struct feature_report report;
 
@@ -221,14 +221,14 @@ int amd_sfh_get_mag_feature_report(int reportnum, u8 *buf, size_t len)
 	report.flux_change_sensitivity = AMD_SFH_DEFAULT_SENSITIVITY;
 	report.flux_min = AMD_SFH_DEFAULT_MIN_VALUE;
 	report.flux_max = AMD_SFH_DEFAULT_MAX_VALUE;
-	amd_sfh_set_common_features(&report.common, reportnum);
+	set_common_features(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
 	return len;
 }
 
 /**
- * amd_sfh_get_mag_input_report - Get magnetometer input report.
+ * get_mag_input_report - Get magnetometer input report.
  * @reportnum:		Report number
  * @buf:		Report buffer
  * @len:		Size of the report buffer
@@ -238,8 +238,7 @@ int amd_sfh_get_mag_feature_report(int reportnum, u8 *buf, size_t len)
  *
  * Returns the amout of bytes written on success or < zero on errors.
  */
-int amd_sfh_get_mag_input_report(int reportnum, u8 *buf, size_t len,
-				 u32 *cpu_addr)
+int get_mag_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	struct input_report report;
 
@@ -247,21 +246,21 @@ int amd_sfh_get_mag_input_report(int reportnum, u8 *buf, size_t len,
 	report.flux_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;
 	report.flux_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
 	report.accuracy = (u16)cpu_addr[3] / AMD_SFH_FW_MUL;
-	amd_sfh_set_common_inputs(&report.common, reportnum);
+	set_common_inputs(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
 	return len;
 }
 
 /**
- * amd_sfh_parse_mag - Parse the HID descriptor for the magnetometer.
+ * parse_mag_descriptor - Parse the HID descriptor for the magnetometer.
  * @hid:	HID device
  *
  * This function gets called during call to hid_add_device.
  *
  * Returns 0 on success and non-zero on errors.
  */
-int amd_sfh_parse_mag(struct hid_device *hid)
+int parse_mag_descriptor(struct hid_device *hid)
 {
 	return hid_parse_report(hid, report_descriptor,
 				sizeof(report_descriptor));

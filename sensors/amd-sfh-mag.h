@@ -11,9 +11,8 @@
 #include <linux/hid.h>
 #include <linux/types.h>
 
-int amd_sfh_get_mag_feature_report(int reportnum, u8 *buf, size_t len);
-int amd_sfh_get_mag_input_report(int reportnum, u8 *buf, size_t len,
-				 u32 *cpu_addr);
-int amd_sfh_parse_mag(struct hid_device *hid);
+int get_mag_feature_report(int reportnum, u8 *buf, size_t len);
+int get_mag_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
+int parse_mag_descriptor(struct hid_device *hid);
 
 #endif

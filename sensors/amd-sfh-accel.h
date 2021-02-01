@@ -11,9 +11,8 @@
 #include <linux/hid.h>
 #include <linux/types.h>
 
-int amd_sfh_get_accel_feature_report(int reportnum, u8 *buf, size_t len);
-int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
-				   u32 *cpu_addr);
-int amd_sfh_parse_accel(struct hid_device *hid);
+int get_accel_feature_report(int reportnum, u8 *buf, size_t len);
+int get_accel_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
+int parse_accel_descriptor(struct hid_device *hid);
 
 #endif

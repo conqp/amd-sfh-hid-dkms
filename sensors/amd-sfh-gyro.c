@@ -13,14 +13,14 @@
 #include "amd-sfh-sensors.h"
 
 struct feature_report {
-	struct amd_sfh_common_features common;
+	struct common_features common;
 	u16 change_sesnitivity;
 	s16 sensitivity_max;
 	s16 sensitivity_min;
 } __packed;
 
 struct input_report {
-	struct amd_sfh_common_inputs common;
+	struct common_inputs common;
 	int angle_x;
 	int angle_y;
 	int angle_z;
@@ -188,7 +188,7 @@ static u8 report_descriptor[] = {
 };
 
 /**
- * amd_sfh_get_gyro_feature_report - Get gyroscope feature report.
+ * get_gyro_feature_report - Get gyroscope feature report.
  * @reportnum:		Report number
  * @buf:		Report buffer
  * @len:		Size of the report buffer
@@ -197,21 +197,21 @@ static u8 report_descriptor[] = {
  *
  * Returns the amout of bytes written on success or < zero on errors.
  */
-int amd_sfh_get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
+int get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
 {
 	struct feature_report report;
 
 	report.change_sesnitivity = AMD_SFH_DEFAULT_SENSITIVITY;
 	report.sensitivity_min = AMD_SFH_DEFAULT_MIN_VALUE;
 	report.sensitivity_max = AMD_SFH_DEFAULT_MAX_VALUE;
-	amd_sfh_set_common_features(&report.common, reportnum);
+	set_common_features(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
 	return len;
 }
 
 /**
- * amd_sfh_get_gyro_input_report - Get gyroscope input report.
+ * get_gyro_input_report - Get gyroscope input report.
  * @reportnum:		Report number
  * @buf:		Report buffer
  * @len:		Size of the report buffer
@@ -221,29 +221,28 @@ int amd_sfh_get_gyro_feature_report(int reportnum, u8 *buf, size_t len)
  *
  * Returns the amout of bytes written on success or < zero on errors.
  */
-int amd_sfh_get_gyro_input_report(int reportnum, u8 *buf, size_t len,
-				  u32 *cpu_addr)
+int get_gyro_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
 {
 	struct input_report report;
 
 	report.angle_x = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
 	report.angle_y = (int)cpu_addr[1] / AMD_SFH_FW_MUL;
 	report.angle_z = (int)cpu_addr[2] / AMD_SFH_FW_MUL;
-	amd_sfh_set_common_inputs(&report.common, reportnum);
+	set_common_inputs(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
 	return len;
 }
 
 /**
- * amd_sfh_parse_gyro - Parse the HID descriptor for the gyroscope.
+ * parse_gyro_descriptor - Parse the HID descriptor for the gyroscope.
  * @hid:	HID device
  *
  * This function gets called during call to hid_add_device.
  *
  * Returns 0 on success and non-zero on errors.
  */
-int amd_sfh_parse_gyro(struct hid_device *hid)
+int parse_gyro_descriptor(struct hid_device *hid)
 {
 	return hid_parse_report(hid, report_descriptor,
 				sizeof(report_descriptor));

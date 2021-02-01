@@ -34,23 +34,16 @@ static void poll(struct work_struct *work)
 {
 	struct amd_sfh_hid_data *hid_data;
 	struct hid_report *report;
-	//u8 *buf;
 
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
 
 	report = hid_register_report(hid_data->hid, HID_INPUT_REPORT, 1, 1);
-	if (!report)
+	if (!report) {
+		hid_err(hid_data->hid, "Failed to register HID report!");
 		goto reschedule;
+	}
 
 	hid_hw_request(hid_data->hid, report, HID_REQ_GET_REPORT);
-
-	/*
-	buf = kzalloc(16, GFP_KERNEL);
-	if (!buf)
-		goto reschedule;
-
-	hid_input_report(hid_data->hid, HID_REQ_GET_REPORT, buf, 16, 0);
-	 */
 
 reschedule:
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
@@ -70,13 +63,13 @@ static int parse(struct hid_device *hid)
 
 	switch (hid_data->sensor_idx) {
 	case ACCEL_IDX:
-		return amd_sfh_parse_accel(hid);
+		return parse_accel_descriptor(hid);
 	case ALS_IDX:
-		return amd_sfh_parse_als(hid);
+		return parse_als_descriptor(hid);
 	case GYRO_IDX:
-		return amd_sfh_parse_gyro(hid);
+		return parse_gyro_descriptor(hid);
 	case MAG_IDX:
-		return amd_sfh_parse_mag(hid);
+		return parse_mag_descriptor(hid);
 	default:
 		return -EINVAL;
 	}
@@ -175,34 +168,30 @@ static int raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
 	case HID_FEATURE_REPORT:
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
-			return amd_sfh_get_accel_feature_report\
-				(reportnum, buf, len);
+			return get_accel_feature_report(reportnum, buf, len);
 		case ALS_IDX:
-			return amd_sfh_get_als_feature_report\
-				(reportnum, buf, len);
+			return get_als_feature_report(reportnum, buf, len);
 		case GYRO_IDX:
-			return amd_sfh_get_gyro_feature_report\
-				(reportnum, buf, len);
+			return get_gyro_feature_report(reportnum, buf, len);
 		case MAG_IDX:
-			return amd_sfh_get_mag_feature_report\
-				(reportnum, buf, len);
+			return get_mag_feature_report(reportnum, buf, len);
 		default:
 			return -EINVAL;
 		}
 	case HID_INPUT_REPORT:
 		switch (hid_data->sensor_idx) {
 		case ACCEL_IDX:
-			return amd_sfh_get_accel_input_report\
-				(reportnum, buf, len, hid_data->cpu_addr);
+			return get_accel_input_report(reportnum, buf, len,
+						      hid_data->cpu_addr);
 		case ALS_IDX:
-			return amd_sfh_get_als_input_report\
-				(reportnum, buf, len, hid_data->cpu_addr);
+			return get_als_input_report(reportnum, buf, len,
+						    hid_data->cpu_addr);
 		case GYRO_IDX:
-			return amd_sfh_get_gyro_input_report\
-				(reportnum, buf, len, hid_data->cpu_addr);
+			return get_gyro_input_report(reportnum, buf, len,
+						     hid_data->cpu_addr);
 		case MAG_IDX:
-			return amd_sfh_get_mag_input_report\
-				(reportnum, buf, len, hid_data->cpu_addr);
+			return get_mag_input_report(reportnum, buf, len,
+						    hid_data->cpu_addr);
 		default:
 			return -EINVAL;
 		}

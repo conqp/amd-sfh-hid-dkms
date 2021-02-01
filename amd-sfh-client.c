@@ -56,7 +56,6 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 					     enum sensor_idx sensor_idx)
 {
 	struct amd_sfh_hid_data *hid_data;
-	int rc;
 
 	hid_data = devm_kzalloc(&pci_dev->dev, sizeof(*hid_data), GFP_KERNEL);
 	if (!hid_data)
@@ -123,7 +122,7 @@ static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
 	return hid;
 
 free_hid_data:
-	devm_kfree(pci_dev->dev, hid->driver_data);
+	devm_kfree(&pci_dev->dev, hid->driver_data);
 destroy_hid_device:
 	hid_destroy_device(hid);
 err_hid_alloc:
