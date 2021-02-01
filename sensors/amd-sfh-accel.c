@@ -236,8 +236,10 @@ int amd_sfh_get_accel_input_report(int reportnum, u8 *buf, size_t len,
 {
 	size_t size = sizeof(struct input_report);
 	pr_err("size check: %lu > %lu", size, len);
+	/*
 	if (size > len)
 		return -ENOMEM;
+	 */
 
 	pr_err("cpu_addr check");
 	if (!cpu_addr)
