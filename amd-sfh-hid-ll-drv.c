@@ -24,13 +24,13 @@
 #define AMD_SFH_HID_DMA_SIZE	(sizeof(int) * 8)
 
 /**
- * poll - Updates the input report for a HID device.
+ * hid_ll_poll - Updates the input report for a HID device.
  * @work:	Delayed work
  *
  * Polls input reports from the respective HID devices and submits
  * them by invoking hid_hw_request() from hid.h.
  */
-static void poll(struct work_struct *work)
+static void hid_ll_poll(struct work_struct *work)
 {
 	struct amd_sfh_hid_data *hid_data;
 	struct hid_report *report;
@@ -50,14 +50,14 @@ reschedule:
 }
 
 /**
- * parse - Callback to parse HID descriptor.
+ * hid_ll_parse - Callback to parse HID descriptor.
  * @hid:	HID device
  *
  * This function gets called during call to hid_add_device
  *
  * Return: 0 on success and non zero on error.
  */
-static int parse(struct hid_device *hid)
+static int hid_ll_parse(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
@@ -76,13 +76,13 @@ static int parse(struct hid_device *hid)
 }
 
 /**
- * start - Starts the HID device.
+ * hid_ll_start - Starts the HID device.
  * @hid:	HID device
  *
  * Allocates DMA memory on the PCI device.
  * Returns 0 on success and non-zero on error.
  */
-static int start(struct hid_device *hid)
+static int hid_ll_start(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
@@ -93,17 +93,17 @@ static int start(struct hid_device *hid)
 	if (!hid_data->cpu_addr)
 		return -EIO;
 
-	INIT_DELAYED_WORK(&hid_data->work, poll);
+	INIT_DELAYED_WORK(&hid_data->work, hid_ll_poll);
 	return 0;
 }
 
 /**
- * stop - Stops the HID device.
+ * hid_ll_stop - Stops the HID device.
  * @hid:	HID device
  *
  * Frees the DMA memory on the PCI device.
  */
-static void stop(struct hid_device *hid)
+static void hid_ll_stop(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
@@ -113,14 +113,14 @@ static void stop(struct hid_device *hid)
 }
 
 /**
- * open - Opens the HID device.
+ * hid_ll_open - Opens the HID device.
  * @hid:	HID device
  *
  * Starts the corresponding sensor via the PCI driver
  * and schedules report polling.
  * Always returns 0.
  */
-static int open(struct hid_device *hid)
+static int hid_ll_open(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
@@ -131,12 +131,12 @@ static int open(struct hid_device *hid)
 }
 
 /**
- * close - Closes the HID device.
+ * hid_ll_close - Closes the HID device.
  * @hid:	HID device
  *
  * Stops report polling and the corresponding sensor via the PCI driver.
  */
-static void close(struct hid_device *hid)
+static void hid_ll_close(struct hid_device *hid)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
 
@@ -145,7 +145,7 @@ static void close(struct hid_device *hid)
 }
 
 /**
- * raw_request - Handles HID requests.
+ * hid_ll_raw_request - Handles HID requests.
  * @hid:	HID device
  * @reportnum:	HID report ID
  * @buf:	Write buffer for HID data
@@ -156,7 +156,7 @@ static void close(struct hid_device *hid)
  * Delegates to the reporting functions
  * defined in amd-sfh-hid-descriptor.h.
  */
-static int raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
+static int hid_ll_raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
 		       size_t len, unsigned char rtype, int reqtype)
 {
 	struct amd_sfh_hid_data *hid_data = hid->driver_data;
@@ -204,10 +204,10 @@ static int raw_request(struct hid_device *hid, unsigned char reportnum, u8 *buf,
  * The HID low-level driver for SFH HID devices.
  */
 struct hid_ll_driver amd_sfh_hid_ll_driver = {
-	.parse	=	parse,
-	.start	=	start,
-	.stop	=	stop,
-	.open	=	open,
-	.close	=	close,
-	.raw_request  =	raw_request,
+	.parse	=	hid_ll_parse,
+	.start	=	hid_ll_start,
+	.stop	=	hid_ll_stop,
+	.open	=	hid_ll_open,
+	.close	=	hid_ll_close,
+	.raw_request  =	hid_ll_raw_request,
 };
