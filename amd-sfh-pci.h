@@ -2,8 +2,8 @@
 /*
  *  AMD Sensor Fusion Hub PCIe driver interface
  *
- *  Authors: Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
- *           Richard Neumann <mail@richard-neumann.de>
+ *  Authors:	Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
+ *		Richard Neumann <mail@richard-neumann.de>
  */
 
 #ifndef AMD_SFH_PCI_H
