@@ -2,9 +2,9 @@
 /*
  * AMD Sensor Fusion Hub HID low-level driver
  *
- * Authors: Sandeep Singh <sandeep.singh@amd.com>
- *          Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
- *          Richard Neumann <mail@richard-neumann.de>
+ * Authors:	Sandeep Singh <sandeep.singh@amd.com>
+ *		Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
+ *		Richard Neumann <mail@richard-neumann.de>
  */
 
 #include <linux/dma-mapping.h>
