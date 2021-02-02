@@ -2,9 +2,9 @@
 /*
  * AMD Sensor Fusion Hub PCIe driver
  *
- * Authors: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
- *          Nehal Bakulchandra Shah <Nehal-bakulchandra.Shah@amd.com>
- *          Richard Neumann <mail@richard-neumann.de>
+ * Authors:	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+ *		Nehal Bakulchandra Shah <Nehal-bakulchandra.Shah@amd.com>
+ *		Richard Neumann <mail@richard-neumann.de>
  */
 
 #include <linux/bitops.h>
