@@ -2,7 +2,7 @@
 /*
  * AMD Sensor Fusion Hub quirks
  *
- * Authors: Richard Neumann <mail@richard-neumann.de>
+ * Author:	Richard Neumann <mail@richard-neumann.de>
  */
 
 #include <linux/dmi.h>
