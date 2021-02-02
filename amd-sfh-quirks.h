@@ -2,7 +2,7 @@
 /*
  *  AMD Sensor Fusion Hub quirks interface
  *
- *  Authors: Richard Neumann <mail@richard-neumann.de>
+ *  Author:	Richard Neumann <mail@richard-neumann.de>
  */
 
 #ifndef AMD_SFH_QUIRKS_H
