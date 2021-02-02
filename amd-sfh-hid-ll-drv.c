@@ -16,10 +16,7 @@
 #include "amd-sfh.h"
 #include "amd-sfh-hid-ll-drv.h"
 #include "amd-sfh-pci.h"
-#include "sensors/amd-sfh-accel.h"
-#include "sensors/amd-sfh-als.h"
-#include "sensors/amd-sfh-gyro.h"
-#include "sensors/amd-sfh-mag.h"
+#include "sensors/amd-sfh-sensors.h"
 
 #define AMD_SFH_HID_DMA_SIZE	(sizeof(int) * 8)
 
