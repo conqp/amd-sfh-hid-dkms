@@ -2,8 +2,8 @@
 /*
  *  AMD Sensor Fusion Hub HID client
  *
- *  Authors: Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
- *           Richard Neumann <mail@richard-neumann.de>
+ *  Authors:	Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
+ *		Richard Neumann <mail@richard-neumann.de>
  */
 
 #include <linux/hid.h>
