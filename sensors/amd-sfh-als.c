@@ -9,7 +9,6 @@
 #include <linux/hid.h>
 #include <linux/types.h>
 
-#include "amd-sfh-als.h"
 #include "amd-sfh-sensors.h"
 
 struct feature_report {

@@ -91,4 +91,25 @@ static inline void set_common_inputs(struct common_inputs *common,
 	common->event_type = AMD_SFH_EVENT_TYPE;
 }
 
+/* Sensor interfaces */
+// Accelerometer
+int get_accel_feature_report(int reportnum, u8 *buf, size_t len);
+int get_accel_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
+int parse_accel_descriptor(struct hid_device *hid);
+
+// Ambient light sensor
+int get_als_feature_report(int reportnum, u8 *buf, size_t len);
+int get_als_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
+int parse_als_descriptor(struct hid_device *hid);
+
+// Gyroscope
+int get_gyro_feature_report(int reportnum, u8 *buf, size_t len);
+int get_gyro_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
+int parse_gyro_descriptor(struct hid_device *hid);
+
+// Magnetometer
+int get_mag_feature_report(int reportnum, u8 *buf, size_t len);
+int get_mag_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
+int parse_mag_descriptor(struct hid_device *hid);
+
 #endif
