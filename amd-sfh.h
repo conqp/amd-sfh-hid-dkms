@@ -2,8 +2,8 @@
 /*
  *  AMD Sensor Fusion Hub common interface
  *
- *  Authors: Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
- *           Richard Neumann <mail@richard-neumann.de>
+ *  Authors:	Nehal Bakulchandra Shah <Nehal-Bakulchandra.Shah@amd.com>
+ *		Richard Neumann <mail@richard-neumann.de>
  */
 
 #ifndef AMD_SFH_H
