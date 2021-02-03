@@ -45,7 +45,7 @@ static const struct dmi_system_id amd_sfh_dmi_quirks[] = {
 /**
  * Returns quirks for hardware, where appropriate or NULL per default.
  */
-const struct amd_sfh_quirks *amd_sfh_get_quirks(void)
+struct amd_sfh_quirks *amd_sfh_get_quirks(void)
 {
 	const struct dmi_system_id *dmi_match;
 
