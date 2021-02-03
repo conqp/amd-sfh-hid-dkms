@@ -37,8 +37,8 @@ MODULE_PARM_DESC(sensor_mask, "override the sensors bitmask");
  */
 uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 {
-	const struct amd_sfh_quirks *quirks;
 	struct amd_sfh_data *privdata;
+	struct amd_sfh_quirks *quirks;
 	uint sensor_mask;
 
 	privdata = pci_get_drvdata(pci_dev);
