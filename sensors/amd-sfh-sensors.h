@@ -16,7 +16,6 @@
 #include <linux/types.h>
 #include <linux/workqueue.h>
 
-#define AMD_SFH_DMA_SIZE		(sizeof(int) * 8)
 #define AMD_SFH_FW_MUL			1000
 #define AMD_SFH_CONNECTION_TYPE		0x01
 #define AMD_SFH_REPORT_STATE		0x41
