@@ -77,7 +77,7 @@ static int hid_ll_parse(struct hid_device *hid)
  * @hid:	HID device
  *
  * Allocates DMA memory on the PCI device.
- * Returns 0 on success and non-zero on error.
+ * Returns 0 on success and non-zero on errors.
  */
 static int hid_ll_start(struct hid_device *hid)
 {
@@ -115,7 +115,8 @@ static void hid_ll_stop(struct hid_device *hid)
  *
  * Starts the corresponding sensor via the PCI driver
  * and schedules report polling.
- * Always returns 0.
+ *
+ * Return 0 on success and 1 on errors.
  */
 static int hid_ll_open(struct hid_device *hid)
 {
@@ -123,8 +124,7 @@ static int hid_ll_open(struct hid_device *hid)
 
 	amd_sfh_start_sensor(hid_data->pci_dev, hid_data->sensor_idx,
 			     hid_data->dma_handle);
-	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
-	return 0;
+	return !schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }
 
 /**
