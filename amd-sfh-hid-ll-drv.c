@@ -35,9 +35,13 @@ static void hid_ll_poll(struct work_struct *work)
 	hid_data = container_of(work, struct amd_sfh_hid_data, work.work);
 
 	report = hid_register_report(hid_data->hid, HID_INPUT_REPORT, 1, 1);
-	if (report)
-		hid_hw_request(hid_data->hid, report, HID_REQ_GET_REPORT);
+	if (!report)
+		goto reschedule;
 
+	hid_hw_request(hid_data->hid, report, HID_REQ_GET_REPORT);
+	kfree(report);
+
+reschedule:
 	schedule_delayed_work(&hid_data->work, AMD_SFH_UPDATE_INTERVAL);
 }
 
