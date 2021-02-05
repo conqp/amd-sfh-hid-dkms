@@ -258,7 +258,7 @@ int get_mag_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
  * parse_mag_descriptor - Parse the HID descriptor for the magnetometer.
  * @hid:	HID device
  *
- * This function gets called during call to hid_add_device.
+ * This function gets called during call to hid_add_device().
  *
  * Returns 0 on success and non-zero on errors.
  */
