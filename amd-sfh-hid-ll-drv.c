@@ -4,6 +4,7 @@
  *
  * Authors:	Sandeep Singh <sandeep.singh@amd.com>
  *		Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
+ *		Basavaraj Natikar <Basavaraj.Natikar@amd.com>
  *		Richard Neumann <mail@richard-neumann.de>
  */
 
