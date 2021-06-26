@@ -7,8 +7,10 @@
  */
 
 #include <linux/hid.h>
+#include <linux/pci.h>
 #include <linux/types.h>
 
+#include "../amd-sfh-pci.h"
 #include "amd-sfh-sensors.h"
 
 struct feature_report {
@@ -187,16 +189,24 @@ int get_als_feature_report(int reportnum, u8 *buf, size_t len)
  *
  * Returns the amout of bytes written on success or < zero on errors.
  */
-int get_als_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
+int get_als_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr,
+			 struct pci_dev *pci_dev)
 {
 	struct input_report report;
 
 	if (!cpu_addr)
 		return -EIO;
 
-	report.illuminance = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
-	set_common_inputs(&report.common, reportnum);
+	switch (amd_sfh_get_version(pci_dev)) {
+	case AMD_SFH_HWID_V2:
+		report.illuminance_value = amd_sfh_get_illuminance(pci_dev);
+		break;
+	default:
+		report.illuminance = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
+		break;
+	}
 
+	set_common_inputs(&report.common, reportnum);
 	memcpy(buf, &report, len);
 	return len;
 }
