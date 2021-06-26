@@ -74,9 +74,9 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	privdata = pci_get_drvdata(pci_dev);
 
 	cmd.ul = 0;
-	cmd.s.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
-	cmd.s.interval = AMD_SFH_UPDATE_INTERVAL;
-	cmd.s.sensor_id = sensor_idx;
+	cmd.cmd_v1.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
+	cmd.cmd_v1.interval = AMD_SFH_UPDATE_INTERVAL;
+	cmd.cmd_v1.sensor_id = sensor_idx;
 
 	parm.ul = 0;
 	parm.s.buffer_layout = 1;

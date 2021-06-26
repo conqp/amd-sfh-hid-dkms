@@ -66,7 +66,16 @@ union amd_sfh_cmd {
 		u32 cmd_id : 8;
 		u32 sensor_id : 8;
 		u32 interval : 16;
-	} s;
+	} cmd_v1;
+	struct {
+		u32 cmd_id : 4;
+		u32 intr_enable : 1;
+		u32 rsvd1 : 3;
+		u32 length : 7;
+		u32 mem_type : 1;
+		u32 sensor_id : 8;
+		u32 interval : 8;
+	} cmd_v2;
 };
 
 /**
