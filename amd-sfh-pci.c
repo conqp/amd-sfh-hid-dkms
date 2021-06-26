@@ -224,9 +224,9 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 
 	privdata->mmio = pcim_iomap_table(pci_dev)[2];
 	pci_set_master(pci_dev);
-	rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64));
+	rc = pci_set_consistent_dma_mask(pci_dev, DMA_BIT_MASK(64));
 	if (rc)
-		rc = pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
+		rc = pci_set_consistent_dma_mask(pci_dev, DMA_BIT_MASK(32));
 	if (rc)
 		return rc;
 
