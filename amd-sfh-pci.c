@@ -230,13 +230,9 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 	if (rc)
 		return rc;
 
-	rc = devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove,
-				      privdata);
-	if (rc)
-		return rc;
-
 	amd_sfh_client_init(privdata);
-	return rc;
+	return devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove,
+					privdata);
 }
 
 static const struct pci_device_id amd_sfh_pci_tbl[] = {
