@@ -15,6 +15,12 @@
 #include "amd-sfh.h"
 
 #define AMD_SFH_UPDATE_INTERVAL		200
+#define AMD_SFH_HWID_V2			0x2
+
+enum amd_sfh_mem_use_type {
+	AMD_SFH_USE_DRAM,
+	AMD_SFH_USE_C2P_REG,
+};
 
 /**
  * Sensor Fusion Hub communication registers

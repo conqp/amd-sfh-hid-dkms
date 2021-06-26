@@ -59,6 +59,17 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 }
 
 /**
+ * amd_sfh_get_version - Returns the hardware version.
+ * @pci_dev:	Sensor Fusion Hub PCI device
+ *
+ * Returns the hardware version ID.
+ */
+u8 amd_sfh_get_version(struct amd_sfh_data *privdata)
+{
+	return readl(privdata->mmio + AMD_P2C_MSG3) & GENMASK(3, 0);
+}
+
+/**
  * amd_sfh_start_sensor - Starts the respective sensor.
  * @pci_dev:	Sensor Fusion Hub PCI device
  * @sensor_idx:	Sensor index
@@ -74,9 +85,24 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	privdata = pci_get_drvdata(pci_dev);
 
 	cmd.ul = 0;
-	cmd.cmd_v1.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
-	cmd.cmd_v1.interval = AMD_SFH_UPDATE_INTERVAL;
-	cmd.cmd_v1.sensor_id = sensor_idx;
+
+	switch (amd_sfh_get_version(privdata)) {
+	case AMD_SFH_HWID_V2:
+		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
+		cmd.cmd_v2.period = AMD_SFH_UPDATE_INTERVAL;
+		cmd.cmd_v2.sensor_id = sensor_idx;
+		cmd.cmd_v2.length = 16;
+
+		if (sensor_idx == ALS_IDX)
+			cmd.cmd_v2.mem_type = AMD_SFH_USE_C2P_REG;
+
+		break;
+	default:
+		cmd.cmd_v1.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
+		cmd.cmd_v1.interval = AMD_SFH_UPDATE_INTERVAL;
+		cmd.cmd_v1.sensor_id = sensor_idx;
+		break;
+	}
 
 	parm.ul = 0;
 	parm.s.buffer_layout = 1;
@@ -101,9 +127,20 @@ void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx)
 	privdata = pci_get_drvdata(pci_dev);
 
 	cmd.ul = 0;
-	cmd.s.cmd_id = AMD_SFH_CMD_DISABLE_SENSOR;
-	cmd.s.interval = 0;
-	cmd.s.sensor_id = sensor_idx;
+
+	switch (amd_sfh_get_version(privdata)) {
+	case AMD_SFH_HWID_V2:
+		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_DISABLE_SENSOR;
+		cmd.cmd_v2.period = 0;
+		cmd.cmd_v2.sensor_id = sensor_idx;
+		cmd.cmd_v2.length  = 16;
+		break;
+	default:
+		cmd.cmd_v1.cmd_id = AMD_SFH_CMD_DISABLE_SENSOR;
+		cmd.cmd_v1.interval = 0;
+		cmd.cmd_v1.sensor_id = sensor_idx;
+		break;
+	}
 
 	parm.ul = 0;
 
@@ -118,9 +155,19 @@ static void amd_sfh_stop_all_sensors(struct amd_sfh_data *privdata)
 	union amd_sfh_cmd cmd;
 
 	cmd.ul = 0;
-	cmd.s.cmd_id = AMD_SFH_CMD_STOP_ALL_SENSORS;
-	cmd.s.interval = 0;
-	cmd.s.sensor_id = 0;
+
+	switch (amd_sfh_get_version(privdata)) {
+	case AMD_SFH_HWID_V2:
+		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_STOP_ALL_SENSORS;
+		cmd.cmd_v2.period = 0;
+		cmd.cmd_v2.sensor_id = 0;
+		break;
+	default:
+		cmd.cmd_v1.cmd_id = AMD_SFH_CMD_STOP_ALL_SENSORS;
+		cmd.cmd_v1.interval = 0;
+		cmd.cmd_v1.sensor_id = 0;
+		break;
+	}
 
 	parm.ul = 0;
 
