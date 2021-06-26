@@ -84,7 +84,7 @@ u8 amd_sfh_get_version(struct pci_dev *pci_dev)
  * amd_sfh_get_illuminance - Returns the illumination value.
  * @pci_dev:	Sensor Fusion Hub PCI device
  */
-int amd_sfh_get_illuminance(struct pci_dev, *pci_dev)
+int amd_sfh_get_illuminance(struct pci_dev *pci_dev)
 {
 	struct amd_sfh_data *privdata = pci_get_drvdata(pci_dev);
 	return (int)readl(privdata->mmio + AMD_C2P_MSG5);
