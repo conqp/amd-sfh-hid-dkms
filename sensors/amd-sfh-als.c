@@ -199,7 +199,7 @@ int get_als_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr,
 
 	switch (amd_sfh_get_version(pci_dev)) {
 	case AMD_SFH_HWID_V2:
-		report.illuminance_value = amd_sfh_get_illuminance(pci_dev);
+		report.illuminance = amd_sfh_get_illuminance(pci_dev);
 		break;
 	default:
 		report.illuminance = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
