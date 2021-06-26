@@ -110,7 +110,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 	switch (_amd_sfh_get_version(privdata)) {
 	case AMD_SFH_HWID_V2:
 		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
-		cmd.cmd_v2.period = AMD_SFH_UPDATE_INTERVAL;
+		cmd.cmd_v2.interval = AMD_SFH_UPDATE_INTERVAL;
 		cmd.cmd_v2.sensor_id = sensor_idx;
 		cmd.cmd_v2.length = 16;
 
@@ -152,7 +152,7 @@ void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx)
 	switch (_amd_sfh_get_version(privdata)) {
 	case AMD_SFH_HWID_V2:
 		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_DISABLE_SENSOR;
-		cmd.cmd_v2.period = 0;
+		cmd.cmd_v2.interval = 0;
 		cmd.cmd_v2.sensor_id = sensor_idx;
 		cmd.cmd_v2.length  = 16;
 		break;
@@ -180,7 +180,7 @@ static void amd_sfh_stop_all_sensors(struct amd_sfh_data *privdata)
 	switch (_amd_sfh_get_version(privdata)) {
 	case AMD_SFH_HWID_V2:
 		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_STOP_ALL_SENSORS;
-		cmd.cmd_v2.period = 0;
+		cmd.cmd_v2.interval = 0;
 		cmd.cmd_v2.sensor_id = 0;
 		break;
 	default:
