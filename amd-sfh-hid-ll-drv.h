@@ -24,6 +24,7 @@
  * @hid:		Backref to the hid device
  * @pci_dev:		Underlying PCI device
  * @sensor_idx:		Sensor index
+ * @version		SFH hardware version
  * @cpu_addr:		DMA mapped CPU address
  * @dma_handle:		DMA handle
  */
@@ -32,6 +33,7 @@ struct amd_sfh_hid_data {
 	struct hid_device *hid;
 	struct pci_dev *pci_dev;
 	enum sensor_idx sensor_idx;
+	u8 version;
 	u32 *cpu_addr;
 	dma_addr_t dma_handle;
 };

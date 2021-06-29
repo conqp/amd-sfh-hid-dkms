@@ -48,11 +48,13 @@ enum sensor_mask {
  * @mmio:		iommapped registers
  * @pci_dev:		The AMD SFH PCI device
  * @sensors:		The HID devices for the corresponding sensors
+ * @version:		SFH device version
  */
 struct amd_sfh_data {
 	void __iomem *mmio;
 	struct pci_dev *pci_dev;
 	struct hid_device *sensors[AMD_SFH_MAX_SENSORS];
+	u8 version;
 };
 
 #endif

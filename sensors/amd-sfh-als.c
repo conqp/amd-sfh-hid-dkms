@@ -190,14 +190,14 @@ int get_als_feature_report(int reportnum, u8 *buf, size_t len)
  * Returns the amout of bytes written on success or < zero on errors.
  */
 int get_als_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr,
-			 struct pci_dev *pci_dev)
+			 struct pci_dev *pci_dev, u8 version)
 {
 	struct input_report report;
 
 	if (!cpu_addr)
 		return -EIO;
 
-	switch (amd_sfh_get_version(pci_dev)) {
+	switch (version) {
 	case AMD_SFH_HWID_V2:
 		report.illuminance = amd_sfh_get_illuminance(pci_dev);
 		break;

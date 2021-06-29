@@ -60,24 +60,13 @@ uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev)
 
 /**
  * amd_sfh_get_version - Returns the hardware version.
- * @privdata:	AMD SFH driver data
+ * @mmio:	iommapped registers
  *
  * Returns the hardware version ID.
  */
-static u8 _amd_sfh_get_version(struct amd_sfh_data *privdata)
+static u8 amd_sfh_get_version(void __iomem *mmio)
 {
-	return readl(privdata->mmio + AMD_P2C_MSG3) & GENMASK(3, 0);
-}
-
-/**
- * amd_sfh_get_version - Returns the hardware version.
- * @pci_dev:	Sensor Fusion Hub PCI device
- *
- * Returns the hardware version ID.
- */
-u8 amd_sfh_get_version(struct pci_dev *pci_dev)
-{
-	return _amd_sfh_get_version(pci_get_drvdata(pci_dev));
+	return readl(mmio + AMD_P2C_MSG3) & GENMASK(3, 0);
 }
 
 /**
@@ -107,7 +96,7 @@ void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 
 	cmd.ul = 0;
 
-	switch (_amd_sfh_get_version(privdata)) {
+	switch (privdata->version) {
 	case AMD_SFH_HWID_V2:
 		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_ENABLE_SENSOR;
 		cmd.cmd_v2.interval = AMD_SFH_UPDATE_INTERVAL;
@@ -149,7 +138,7 @@ void amd_sfh_stop_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx)
 
 	cmd.ul = 0;
 
-	switch (_amd_sfh_get_version(privdata)) {
+	switch (privdata->version) {
 	case AMD_SFH_HWID_V2:
 		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_DISABLE_SENSOR;
 		cmd.cmd_v2.interval = 0;
@@ -177,7 +166,7 @@ static void amd_sfh_stop_all_sensors(struct amd_sfh_data *privdata)
 
 	cmd.ul = 0;
 
-	switch (_amd_sfh_get_version(privdata)) {
+	switch (privdata->version) {
 	case AMD_SFH_HWID_V2:
 		cmd.cmd_v2.cmd_id = AMD_SFH_CMD_STOP_ALL_SENSORS;
 		cmd.cmd_v2.interval = 0;
@@ -230,6 +219,7 @@ static int amd_sfh_pci_probe(struct pci_dev *pci_dev,
 	if (rc)
 		return rc;
 
+	privdata->version = amd_sfh_get_version(privdata->mmio);
 	amd_sfh_client_init(privdata);
 	return devm_add_action_or_reset(&pci_dev->dev, amd_sfh_pci_remove,
 					privdata);

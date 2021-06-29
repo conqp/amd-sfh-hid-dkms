@@ -46,23 +46,25 @@ static char *get_sensor_name(enum sensor_idx sensor_idx)
 /**
  * get_hid_data - Allocate and initialize HID device driver data.
  * @hid:		HID device
- * @pci_dev:		SFH PCI device
+ * @privdata:		SFH driver data
  * @sensor_idx:		Sensor index
  *
  * Returns a pointer to the HID driver data on success or an ERR_PTR on error.
  */
 static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
-					     struct pci_dev *pci_dev,
+					     struct amd_sfh_data *privdata,
 					     enum sensor_idx sensor_idx)
 {
 	struct amd_sfh_hid_data *hid_data;
 
-	hid_data = devm_kzalloc(&pci_dev->dev, sizeof(*hid_data), GFP_KERNEL);
+	hid_data = devm_kzalloc(&privdata->pci_dev->dev, sizeof(*hid_data),
+				GFP_KERNEL);
 	if (!hid_data)
 		return ERR_PTR(-ENOMEM);
 
 	hid_data->hid = hid;
-	hid_data->pci_dev = pci_dev;
+	hid_data->pci_dev = privdata->pci_dev;
+	hid_data->version = privdata->version;
 	hid_data->sensor_idx = sensor_idx;
 	hid_data->cpu_addr = NULL;
 
@@ -71,13 +73,13 @@ static struct amd_sfh_hid_data *get_hid_data(struct hid_device *hid,
 
 /**
  * get_hid_device - Creates a HID device for a sensor on th SFH.
- * @pci_dev:		Underlying PCI device
+ * @privdata:		SFH driver data
  * @sensor_idx:		Sensor index
  *
  * Sets up the HID device and the corresponding HID driver data.
  * Returns a pointer to the new HID device or NULL on errors.
  */
-static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
+static struct hid_device *get_hid_device(struct amd_sfh_data *privdata,
 					 enum sensor_idx sensor_idx)
 {
 	struct hid_device *hid;
@@ -85,7 +87,7 @@ static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
 
 	hid = hid_allocate_device();
 	if (IS_ERR(hid)) {
-		pci_err(pci_dev, "HID device allocation returned: %ld",
+		pci_err(privdata->pci_dev, "HID device allocation returned: %ld",
 			PTR_ERR(hid));
 		goto err_hid_alloc;
 	}
@@ -106,7 +108,7 @@ static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
 	if (rc >= sizeof(hid->name))
 		hid_warn(hid, "Could not set HID device name.\n");
 
-	hid->driver_data = get_hid_data(hid, pci_dev, sensor_idx);
+	hid->driver_data = get_hid_data(hid, privdata, sensor_idx);
 	if (IS_ERR(hid->driver_data)) {
 		hid_err(hid, "HID data allocation returned: %ld",
 			PTR_ERR(hid->driver_data));
@@ -122,7 +124,7 @@ static struct hid_device *get_hid_device(struct pci_dev *pci_dev,
 	return hid;
 
 free_hid_data:
-	devm_kfree(&pci_dev->dev, hid->driver_data);
+	devm_kfree(&privdata->pci_dev->dev, hid->driver_data);
 destroy_hid_device:
 	hid_destroy_device(hid);
 err_hid_alloc:
@@ -131,7 +133,7 @@ err_hid_alloc:
 
 /**
  * amd_sfh_client_init - Initializes the HID devices.
- * @privdata:	Driver data
+ * @privdata:		SFH driver data
  *
  * Matches the sensor bitmasks against the sensor bitmask retrieved
  * from amd_sfh_get_sensor_mask().
@@ -140,30 +142,27 @@ err_hid_alloc:
  */
 void amd_sfh_client_init(struct amd_sfh_data *privdata)
 {
-	struct pci_dev *pci_dev;
-	uint sensor_mask;
+	struct pci_dev *pci_dev = privdata->pci_dev;
+	uint sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
 	int i = 0;
 
-	pci_dev = privdata->pci_dev;
-	sensor_mask = amd_sfh_get_sensor_mask(pci_dev);
-
 	if (sensor_mask & ACCEL_MASK)
-		privdata->sensors[i++] = get_hid_device(pci_dev, ACCEL_IDX);
+		privdata->sensors[i++] = get_hid_device(privdata, ACCEL_IDX);
 	else
 		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & GYRO_MASK)
-		privdata->sensors[i++] = get_hid_device(pci_dev, GYRO_IDX);
+		privdata->sensors[i++] = get_hid_device(privdata, GYRO_IDX);
 	else
 		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & MAG_MASK)
-		privdata->sensors[i++] = get_hid_device(pci_dev, MAG_IDX);
+		privdata->sensors[i++] = get_hid_device(privdata, MAG_IDX);
 	else
 		privdata->sensors[i++] = NULL;
 
 	if (sensor_mask & ALS_MASK)
-		privdata->sensors[i++] = get_hid_device(pci_dev, ALS_IDX);
+		privdata->sensors[i++] = get_hid_device(privdata, ALS_IDX);
 	else
 		privdata->sensors[i++] = NULL;
 }

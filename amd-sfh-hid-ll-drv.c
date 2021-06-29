@@ -179,7 +179,8 @@ static int hid_ll_raw_request(struct hid_device *hid, unsigned char reportnum, u
 		case ALS_IDX:
 			return get_als_input_report(reportnum, buf, len,
 						    hid_data->cpu_addr,
-						    hid_data->pci_dev);
+						    hid_data->pci_dev,
+						    hid_data->version);
 		case GYRO_IDX:
 			return get_gyro_input_report(reportnum, buf, len,
 						     hid_data->cpu_addr);

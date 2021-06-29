@@ -97,7 +97,6 @@ union amd_sfh_parm {
 };
 
 uint amd_sfh_get_sensor_mask(struct pci_dev *pci_dev);
-u8 amd_sfh_get_version(struct pci_dev *pci_dev);
 int amd_sfh_get_illuminance(struct pci_dev *pci_dev);
 void amd_sfh_start_sensor(struct pci_dev *pci_dev, enum sensor_idx sensor_idx,
 			  dma_addr_t dma_handle);

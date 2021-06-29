@@ -99,7 +99,7 @@ int parse_accel_descriptor(struct hid_device *hid);
 // Ambient light sensor
 int get_als_feature_report(int reportnum, u8 *buf, size_t len);
 int get_als_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr,
-			 struct pci_dev *pci_dev);
+			 struct pci_dev *pci_dev, u8 version);
 int parse_als_descriptor(struct hid_device *hid);
 
 // Gyroscope
