@@ -13,4 +13,5 @@ amd-sfh-objs += amd-sfh-quirks.o
 amd-sfh-objs += sensors/amd-sfh-accel.o
 amd-sfh-objs += sensors/amd-sfh-als.o
 amd-sfh-objs += sensors/amd-sfh-gyro.o
+amd-sfh-objs += sensors/amd-sfh-lid.o
 amd-sfh-objs += sensors/amd-sfh-mag.o

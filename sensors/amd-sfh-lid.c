@@ -12,16 +12,15 @@
 #include "amd-sfh-sensors.h"
 
 struct feature_report {
-	struct common_feature_property common_property;
+	struct common_features common;
 } __packed;
 
 struct input_report {
-    struct common_input_property common_property;
-    /* values specific to human presence sensor */
-    u8 sw_state;
+	struct common_inputs common;
+	u8 state;
 } __packed;
 
-static const u8 report_descriptor[] = {
+static u8 report_descriptor[] = {
 0x06, 0x43, 0xFF,  // Usage Page (Vendor Defined 0xFF43)
 0x0A, 0x02, 0x02,  // Usage (0x0202)
 0xA1, 0x01,        // Collection (Application)
