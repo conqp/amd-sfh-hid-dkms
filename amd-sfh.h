@@ -13,19 +13,21 @@
 #include <linux/hid.h>
 #include <linux/pci.h>
 
-#define AMD_SFH_MAX_SENSORS	4
+#define AMD_SFH_MAX_SENSORS	5
 
 /**
  * The sensor indices on the AMD SFH device
  * @ACCEL_IDX:	Index of the accelerometer
  * @GYRO_IDX:	Index of the gyroscope
  * @MAG_IDX:	Index of the magnetometer
+ * @LID_IDX:	Index of the lid switch
  * @ALS_IDX:	Index of the ambient light sensor
  */
 enum sensor_idx {
 	ACCEL_IDX = 0,
 	GYRO_IDX,
 	MAG_IDX,
+	LID_IDX = 15,
 	ALS_IDX = 19,
 };
 
@@ -34,12 +36,14 @@ enum sensor_idx {
  * @ACCEL_MASK:	Bit mask of the accelerometer
  * @GYRO_MASK:	Bit mask of the gyroscope
  * @MAG_MASK:	Bit mask of the magnetometer
+ * @LID_MASK:	Bit mask of the lid switch
  * @ALS_MASK:	Bit mask of the ambient light sensor
  */
 enum sensor_mask {
 	ACCEL_MASK = BIT(ACCEL_IDX),
 	GYRO_MASK = BIT(GYRO_IDX),
 	MAG_MASK = BIT(MAG_IDX),
+	LID_MASK = BIT(LID_IDX),
 	ALS_MASK = BIT(ALS_IDX),
 };
 

@@ -61,6 +61,8 @@ static int hid_ll_parse(struct hid_device *hid)
 		return parse_als_descriptor(hid);
 	case GYRO_IDX:
 		return parse_gyro_descriptor(hid);
+	case LID_IDX:
+		return parse_lid_descriptor(hid);
 	case MAG_IDX:
 		return parse_mag_descriptor(hid);
 	default:
@@ -166,6 +168,8 @@ static int hid_ll_raw_request(struct hid_device *hid, unsigned char reportnum, u
 			return get_als_feature_report(reportnum, buf, len);
 		case GYRO_IDX:
 			return get_gyro_feature_report(reportnum, buf, len);
+		case LID_IDX:
+			return get_lid_feature_report(reportnum, buf, len);
 		case MAG_IDX:
 			return get_mag_feature_report(reportnum, buf, len);
 		default:
@@ -184,6 +188,9 @@ static int hid_ll_raw_request(struct hid_device *hid, unsigned char reportnum, u
 		case GYRO_IDX:
 			return get_gyro_input_report(reportnum, buf, len,
 						     hid_data->cpu_addr);
+		case LID_IDX:
+			return get_lid_input_report(reportnum, buf, len,
+						    hid_data->cpu_addr);
 		case MAG_IDX:
 			return get_mag_input_report(reportnum, buf, len,
 						    hid_data->cpu_addr);

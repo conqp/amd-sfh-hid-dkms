@@ -36,6 +36,8 @@ static char *get_sensor_name(enum sensor_idx sensor_idx)
 		return "gyroscope";
 	case MAG_IDX:
 		return "magnetometer";
+	case LID_IDX:
+		return "lid switch";
 	case ALS_IDX:
 		return "ambient light sensor";
 	default:
@@ -158,6 +160,11 @@ void amd_sfh_client_init(struct amd_sfh_data *privdata)
 
 	if (sensor_mask & MAG_MASK)
 		privdata->sensors[i++] = get_hid_device(privdata, MAG_IDX);
+	else
+		privdata->sensors[i++] = NULL;
+
+	if (sensor_mask & LID_MASK)
+		privdata->sensors[i++] = get_hid_device(privdata, LID_IDX);
 	else
 		privdata->sensors[i++] = NULL;
 

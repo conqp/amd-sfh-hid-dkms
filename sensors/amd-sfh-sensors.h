@@ -107,6 +107,11 @@ int get_gyro_feature_report(int reportnum, u8 *buf, size_t len);
 int get_gyro_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
 int parse_gyro_descriptor(struct hid_device *hid);
 
+// Lid switch
+int get_lid_feature_report(int reportnum, u8 *buf, size_t len);
+int get_lid_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
+int parse_lid_descriptor(struct hid_device *hid);
+
 // Magnetometer
 int get_mag_feature_report(int reportnum, u8 *buf, size_t len);
 int get_mag_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr);
