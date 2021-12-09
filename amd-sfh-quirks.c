@@ -14,7 +14,7 @@
  * Quirks for HP Envy x360 series systems.
  */
 static const struct amd_sfh_quirks hp_envy_x360_quirks = {
-	.sensor_mask = ACCEL_MASK | MAG_MASK
+	.sensor_mask = ACCEL_MASK | MAG_MASK | LID_MASK
 };
 
 /**
