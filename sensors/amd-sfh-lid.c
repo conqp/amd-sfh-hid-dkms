@@ -76,7 +76,7 @@ int get_lid_input_report(int reportnum, u8 *buf, size_t len, u32 *cpu_addr)
 	if (!cpu_addr)
 		return -EIO;
 
-	report.state = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
+	//report.state = (int)cpu_addr[0] / AMD_SFH_FW_MUL;
 	set_common_inputs(&report.common, reportnum);
 
 	memcpy(buf, &report, len);
