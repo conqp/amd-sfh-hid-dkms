@@ -1,3 +1,9 @@
+============
+Archive Note
+============
+Since the current state of this driver is good-enough for my current laptop, which is nearing the end of its life cycle, I chose to archive this repo in its current state, since I will most likely no longer work on it.
+Please use the kernel's upstream version instead.
+
 =======================
 Kernel drivers: amd-sfh
 =======================
